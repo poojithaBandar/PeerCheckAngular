@@ -1,0 +1,9 @@
+<div>
+    <h2>Submit Feedback</h2>
+    <textarea [(ngModel)]="feedback" placeholder="Enter your feedback"></textarea>
+    <button (click)="submitFeedback()" [disabled]="!feedback.trim()">Submit Feedback</button>
+  
+    <div *ngIf="submissionResult">
+      <h3>{{ submissionResult }}</h3>
+    </div>
+  </div>
