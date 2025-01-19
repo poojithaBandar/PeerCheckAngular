@@ -25,4 +25,16 @@ export class ApiService {
   fetchAudioRecords(): Observable<any> {
     return this.http.get(`${this.baseUrl}audio-records/`);
   }
+
+  // Method to save prompts
+  savePrompts(prompts: {
+    startPrompt: string;
+    endPrompt: string;
+  }): Observable<any> {
+    return this.http.post(`${this.baseUrl}save-prompts`, prompts);
+  }
+
+  addAudioRecord(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}add-audio-record/`, formData);
+  }
 }

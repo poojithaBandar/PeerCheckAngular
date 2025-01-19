@@ -1,84 +1,114 @@
 <div>
-    <h2>Process Audio</h2>
+  <h2>Process Audio</h2>
+
+  <!-- File Upload Section -->
+  <div>
+    <h3>Upload Audio File</h3>
     <input type="file" (change)="onFileSelected($event)" />
     <button (click)="processAudio()" [disabled]="!selectedFile || isProcessing">
-      {{ isProcessing ? 'Processing...' : 'Process Audio' }}
+      {{ isProcessing ? 'Processing...' : 'Process File' }}
     </button>
-  
-    <!-- Display audio_file data -->
-    <div *ngIf="audioFileData">
-      <h3>Audio File Details</h3>
-      <p><strong>File Path:</strong> {{ audioFileData.file_path }}</p>
-      <p><strong>Transcription:</strong> {{ audioFileData.transcription }}</p>
-      <p><strong>Keywords Detected:</strong> {{ audioFileData.keywords_detected }}</p>
-      <p><strong>Status:</strong> {{ audioFileData.status }}</p>
-      <p><strong>Duration:</strong> {{ audioFileData.duration }}</p>
-    </div>
-  
-    <!-- Display segments -->
-    <div *ngIf="segments.length > 0">
-      <h3>Segments</h3>
-      <ul>
-        <li *ngFor="let segment of segments">{{ segment }}</li>
-      </ul>
-    </div>
-  
-    <!-- Display error message -->
-    <div *ngIf="errorMessage" class="error">
-      <p>{{ errorMessage }}</p>
-    </div>
-  
-    <!-- Display fetched audio records -->
-    <div>
-      <h2>Existing Audio Records</h2>
-  
-      <!-- Show error if exists -->
-      <div *ngIf="fetchErrorMessage" class="error">
-        <p>{{ fetchErrorMessage }}</p>
-      </div>
-  
-      <!-- Display records -->
-      <div *ngIf="audioRecords.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>File Path</th>
-              <th>Transcription</th>
-              <th>Keywords Detected</th>
-              <th>Status</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let record of audioRecords; let i = index">
-              <td>{{ record.id }}</td>
-              <td>{{ record.file_path }}</td>
-  
-              <!-- Transcription with View More -->
-              <td>
-                <span *ngIf="!record.showFull">
-                  {{ record.transcription | slice: 0:500 }}...
-                  <a href="javascript:void(0)" (click)="toggleViewMore(i, true)">View More</a>
-                </span>
-                <span *ngIf="record.showFull">
-                  {{ record.transcription }}
-                  <a href="javascript:void(0)" (click)="toggleViewMore(i, false)">View Less</a>
-                </span>
-              </td>
-  
-              <td>{{ record.keywords_detected }}</td>
-              <td>{{ record.status }}</td>
-              <td>{{ record.duration }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-  
-      <!-- No records message -->
-      <div *ngIf="audioRecords.length === 0 && !fetchErrorMessage">
-        <p>No audio records found.</p>
-      </div>
-    </div>
   </div>
-  
+
+  <hr />
+
+  <!-- Live Recording Section -->
+  <div>
+    <h3>Live Recording</h3>
+    <label for="startPrompt">Start Prompt:</label>
+    <input
+      id="startPrompt"
+      [(ngModel)]="startPrompt"
+      placeholder="Enter start prompt"
+    />
+
+    <label for="endPrompt">End Prompt:</label>
+    <input
+      id="endPrompt"
+      [(ngModel)]="endPrompt"
+      placeholder="Enter end prompt"
+    />
+
+    <button (click)="startRecording()" [disabled]="isRecording">
+      Start Recording
+    </button>
+    <button (click)="stopRecording()" [disabled]="!isRecording">
+      Stop Recording
+    </button>
+  </div>
+
+  <hr />
+
+  <!-- Display audio_file data -->
+  <div *ngIf="audioFileData" class="audio-details mt-4">
+    <h3>Audio File Details</h3>
+    <p><strong>File Path:</strong> {{ audioFileData.file_path }}</p>
+    <p><strong>Transcription:</strong> {{ audioFileData.transcription }}</p>
+    <p><strong>Keywords Detected:</strong> {{ audioFileData.keywords_detected }}</p>
+    <p><strong>Status:</strong> {{ audioFileData.status }}</p>
+    <p><strong>Duration:</strong> {{ audioFileData.duration }} seconds</p>
+  </div>
+
+  <!-- Segments Display -->
+  <div *ngIf="segments.length > 0" class="segments mt-4">
+    <h3>Segments</h3>
+    <ul>
+      <li *ngFor="let segment of segments">{{ segment }}</li>
+    </ul>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Audio Records Section -->
+  <div class="records-section mt-5">
+    <h2>Existing Audio Records</h2>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Search records"
+      class="form-control mb-3"
+    />
+
+    <div *ngIf="fetchErrorMessage" class="alert alert-danger">
+      <p>{{ fetchErrorMessage }}</p>
+    </div>
+
+    <table *ngIf="filteredAudioRecords.length > 0" class="table table-responsive">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>File Path</th>
+          <th>Transcription</th>
+          <th>Keywords Detected</th>
+          <th>Status</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of filteredAudioRecords; let i = index">
+          <td>{{ record.id }}</td>
+          <td>{{ record.file_path }}</td>
+          <td>
+            <span *ngIf="!record.showFull">
+              {{ record.transcription | slice: 0:100 }}...
+              <a href="javascript:void(0)" (click)="toggleViewMore(i, true)">View More</a>
+            </span>
+            <span *ngIf="record.showFull">
+              {{ record.transcription }}
+              <a href="javascript:void(0)" (click)="toggleViewMore(i, false)">View Less</a>
+            </span>
+          </td>
+          <td>{{ record.keywords_detected }}</td>
+          <td>{{ record.status }}</td>
+          <td>{{ record.duration }} seconds</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="filteredAudioRecords.length === 0">No records found.</p>
+  </div>
+
+</div>

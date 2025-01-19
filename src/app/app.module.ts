@@ -6,12 +6,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AudioProcessComponent } from './audio-process/audio-process.component';
 import { FeedbackComponent } from './feedback/feedback.component';
+import { AddRecordComponent } from './add-record/add-record.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AudioProcessComponent,
-    FeedbackComponent
+    FeedbackComponent,
+    AddRecordComponent
   ],
   imports: [
     BrowserModule,
