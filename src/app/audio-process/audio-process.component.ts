@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-audio-process',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
 export class AudioProcessComponent implements OnInit {
   selectedFile: File | null = null;
   audioFileData: any = null;
-  segments: any[] = [];
+  segments: string[] = [];
   isProcessing: boolean = false;
   errorMessage: string | null = null;
 
@@ -75,16 +76,57 @@ export class AudioProcessComponent implements OnInit {
   processAudio(): void {
     if (this.selectedFile) {
       this.isProcessing = true;
-      this.apiService.processAudio(this.selectedFile).subscribe({
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      formData.append('start_prompt', this.startPrompt);
+      formData.append('end_prompt', this.endPrompt);
+      this.apiService.processAudio(formData).subscribe({
         next: (response) => {
           this.audioFileData = response.audio_file;
-          this.segments = response.segments;
+          this.segments = response.extracted_text;
           this.isProcessing = false;
+          Swal.fire(
+            'Success!',
+            'Audio file processed successfully!',
+            'success'
+          ).then(() => {
+            // Clear the prompts after processing
+            this.startPrompt = '';
+            this.endPrompt = '';
+            // window.location.reload(); // Reload the page after success
+          });
         },
-        error: (err) => {
-          this.errorMessage = 'Error processing audio. Please try again.';
+        error: (error) => {
+          // this.errorMessage = 'Error processing audio. Please try again.';
+          // this.isProcessing = false;
+          // console.error(err);
+          // Swal.fire('Error!', this.errorMessage, 'error');
           this.isProcessing = false;
-          console.error(err);
+          this.isRecording = false;
+          if (
+            error.error.error === 'Start or End Prompt not found in the audio.'
+          ) {
+            console.log(
+              'Could not find the specified prompts in the audio. Please verify your prompts and try again.'
+            );
+            this.errorMessage =
+              'Could not find the specified prompts in the audio. Please verify your prompts and try again.';
+            Swal.fire('Error!', this.errorMessage, 'error').then(() => {
+              // Clear the prompts after processing
+              this.startPrompt = '';
+              this.endPrompt = '';
+              // window.location.reload(); // Reload the page after success
+            });
+          } else {
+            console.log('Failed to process audio. Please try again.');
+            this.errorMessage = 'Failed to process audio. Please try again.';
+            Swal.fire('Error!', this.errorMessage, 'error').then(() => {
+              // Clear the prompts after processing
+              this.startPrompt = '';
+              this.endPrompt = '';
+              // window.location.reload(); // Reload the page after success
+            });
+          }
         },
       });
     }
@@ -92,6 +134,14 @@ export class AudioProcessComponent implements OnInit {
 
   // Start recording logic
   startRecording(): void {
+    if (!this.startPrompt || !this.endPrompt) {
+      Swal.fire(
+        'Warning!',
+        'Please provide both Start Prompt and End Prompt.',
+        'warning'
+      );
+      return;
+    }
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
@@ -102,6 +152,8 @@ export class AudioProcessComponent implements OnInit {
           });
           this.recordedChunks = [];
 
+          console.log(this.mediaRecorder);
+          console.log(this.mediaRecorder.state);
           this.mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
               this.recordedChunks.push(event.data);
@@ -111,16 +163,21 @@ export class AudioProcessComponent implements OnInit {
           this.mediaRecorder.onstop = () => {
             const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
             this.convertToWav(blob);
+            this.isRecording = false;
+            this.isProcessing = true;
           };
 
           this.mediaRecorder.start();
           this.isRecording = true;
+          this.isProcessing = false;
           console.log('Recording started...');
         })
         .catch((error) => {
           console.error('Error accessing microphone:', error);
-          alert(
-            'Could not access your microphone. Please ensure microphone access is allowed.'
+          Swal.fire(
+            'Error!',
+            'Could not access your microphone. Please ensure microphone access is allowed.',
+            'error'
           );
         });
     }
@@ -131,6 +188,7 @@ export class AudioProcessComponent implements OnInit {
     if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
       this.mediaRecorder.stop();
       this.isRecording = false;
+      this.isProcessing = true;
       console.log('Recording stopped.');
     }
   }
@@ -144,7 +202,9 @@ export class AudioProcessComponent implements OnInit {
       audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
         const wavBuffer = this.encodeWav(audioBuffer);
         const wavBlob = new Blob([wavBuffer], { type: 'audio/wav' });
-        const file = new File([wavBlob], 'recorded-audio.wav', { type: 'audio/wav' });
+        const file = new File([wavBlob], 'recorded-audio.wav', {
+          type: 'audio/wav',
+        });
         this.uploadRecordedFile(file);
       });
     };
@@ -160,7 +220,9 @@ export class AudioProcessComponent implements OnInit {
     const blockAlign = (bitDepth / 8) * numChannels;
     const byteRate = sampleRate * blockAlign;
 
-    const wavBuffer = new ArrayBuffer(44 + audioBuffer.length * numChannels * (bitDepth / 8));
+    const wavBuffer = new ArrayBuffer(
+      44 + audioBuffer.length * numChannels * (bitDepth / 8)
+    );
     const view = new DataView(wavBuffer);
 
     let offset = 0;
@@ -219,14 +281,111 @@ export class AudioProcessComponent implements OnInit {
     formData.append('start_prompt', this.startPrompt);
     formData.append('end_prompt', this.endPrompt);
 
-    this.apiService.processAudio(file).subscribe(
+    const keywords = [
+      'AI',
+      'Machine Learning',
+      'Neural Networks',
+      'Cloud Computing',
+      'Blockchain',
+      'Robotics',
+      'Crypto',
+      'Healthcare',
+      'Mental Health',
+      'Stocks',
+      'Doctors',
+      'Students',
+      'Graduation',
+      'Movies',
+      'Music',
+      'Football',
+      'Tennis',
+      'Sustainability',
+      'Climate Change',
+      'Elections',
+      'Education',
+      'Finance',
+      'Investment',
+      'Bonds',
+      'Banking',
+      'Marketing',
+      'Sales',
+      'Networking',
+      'Leadership',
+      'Consulting',
+      'Entertainment',
+      'Gaming',
+      'Podcasts',
+      'Olympics',
+      'Cricket',
+      'Rugby',
+      'Baseball',
+      'Renewable Energy',
+      'Recycling',
+      'Pollution',
+      'Cybersecurity',
+      'Data Privacy',
+      'Innovation',
+      'Artificial Intelligence',
+      'Data Science',
+      'Deep Learning',
+      'Natural Language Processing',
+      'IoT',
+      'Agriculture',
+      'Automation',
+      'Smart Cities',
+      'Smart Homes',
+      'Augmented Reality',
+      'Virtual Reality',
+      'Cloud Storage',
+      'Big Data',
+      'Business Intelligence',
+      'Digital Transformation',
+    ];
+    formData.append('keywords', keywords.join(','));
+
+    this.apiService.processAudio(formData).subscribe(
       (response) => {
-        this.audioFileData = response;
-        alert('Audio file processed successfully!');
+        this.audioFileData = response.audio_file;
+        this.segments = response.extracted_text;
+        this.isProcessing = false;
+        this.isRecording = false;
+        Swal.fire(
+          'Success!',
+          'Audio file processed successfully!',
+          'success'
+        ).then(() => {
+          this.startPrompt = '';
+          this.endPrompt = '';
+          // window.location.reload(); // Reload the page after success
+        });
       },
       (error) => {
-        console.error('Error processing audio:', error);
-        alert('Failed to process audio. Please try again.');
+        this.isProcessing = false;
+        this.isRecording = false;
+        if (
+          error.error.error === 'Start or End Prompt not found in the audio.'
+        ) {
+          console.log(
+            'Could not find the specified prompts in the audio. Please verify your prompts and try again.'
+          );
+          this.errorMessage =
+            'Could not find the specified prompts in the audio. Please verify your prompts and try again.';
+          Swal.fire('Error!', this.errorMessage, 'error').then(() => {
+            // Clear the prompts after processing
+            this.startPrompt = '';
+            this.endPrompt = '';
+            // window.location.reload(); // Reload the page after success
+          });
+        } else {
+          console.log('Failed to process audio. Please try again.');
+          this.errorMessage = 'Failed to process audio. Please try again.';
+          Swal.fire('Error!', this.errorMessage, 'error').then(() => {
+            // Clear the prompts after processing
+            this.startPrompt = '';
+            this.endPrompt = '';
+            // window.location.reload(); // Reload the page after success
+          });
+        }
       }
     );
   }
@@ -234,27 +393,5 @@ export class AudioProcessComponent implements OnInit {
   // Toggle View More/View Less
   toggleViewMore(index: number, showFull: boolean): void {
     this.audioRecords[index].showFull = showFull;
-  }
-
-  // Navigate to Add Record Page
-  openAddRecord(): void {
-    this.router.navigate(['/add-record']);
-  }
-
-  // Save prompts
-  savePrompts(): void {
-    const prompts = {
-      startPrompt: this.startPrompt,
-      endPrompt: this.endPrompt,
-    };
-    this.apiService.savePrompts(prompts).subscribe({
-      next: () => {
-        this.promptsMessage = 'Prompts saved successfully!';
-      },
-      error: (err) => {
-        this.promptsMessage = 'Failed to save prompts.';
-        console.error(err);
-      },
-    });
   }
 }

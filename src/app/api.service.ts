@@ -6,13 +6,17 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private baseUrl = 'http://127.0.0.1:8000/api/'; // Replace with your backend URL
+  // Local
+  // private baseUrl = 'http://127.0.0.1:8000/api/'; // Replace with your backend UR
+
+  // Server
+  private baseUrl = 'http://13.52.99.241:80/api/';
   constructor(private http: HttpClient) {}
 
   // Process Audio API
-  processAudio(file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file);
+  processAudio(formData: FormData): Observable<any> {
+    // const formData = new FormData();
+    // formData.append('file', file);
 
     return this.http.post(`${this.baseUrl}process-audio/`, formData);
   }

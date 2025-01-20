@@ -1,17 +1,4 @@
 <div>
-  <h2>Process Audio</h2>
-
-  <!-- File Upload Section -->
-  <div>
-    <h3>Upload Audio File</h3>
-    <input type="file" (change)="onFileSelected($event)" />
-    <button (click)="processAudio()" [disabled]="!selectedFile || isProcessing">
-      {{ isProcessing ? 'Processing...' : 'Process File' }}
-    </button>
-  </div>
-
-  <hr />
-
   <!-- Live Recording Section -->
   <div>
     <h3>Live Recording</h3>
@@ -29,11 +16,11 @@
       placeholder="Enter end prompt"
     />
 
-    <button (click)="startRecording()" [disabled]="isRecording">
+    <button (click)="startRecording()" [disabled]="isRecording || isProcessing">
       Start Recording
     </button>
-    <button (click)="stopRecording()" [disabled]="!isRecording">
-      Stop Recording
+    <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing">
+      {{ isProcessing ? 'Processing...' : 'Stop Recording' }}
     </button>
   </div>
 
@@ -50,7 +37,7 @@
   </div>
 
   <!-- Segments Display -->
-  <div *ngIf="segments.length > 0" class="segments mt-4">
+  <div *ngIf="segments && segments.length > 0" class="segments mt-4">
     <h3>Segments</h3>
     <ul>
       <li *ngFor="let segment of segments">{{ segment }}</li>
