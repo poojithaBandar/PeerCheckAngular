@@ -9,7 +9,7 @@ export class ApiService {
   // Local
   private backendUrl = 'http://127.0.0.1:8000/';
   // Server
-  // private backendUrl = 'http://13.52.99.241:80/';
+  // private backendUrl = 'https://54.193.137.246/';
 
   // Local
   private baseUrl = this.backendUrl + 'api/'; // Replace with your backend UR
