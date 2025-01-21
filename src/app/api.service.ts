@@ -7,10 +7,14 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
   // Local
-  private baseUrl = 'http://127.0.0.1:8000/api/'; // Replace with your backend UR
-
+  private backendUrl = 'http://127.0.0.1:8000/';
   // Server
-  // private baseUrl = 'http://13.52.99.241:80/api/';
+  // private backendUrl = 'http://13.52.99.241:80/';
+
+  // Local
+  private baseUrl = this.backendUrl + 'api/'; // Replace with your backend UR
+  public mediaURL = this.backendUrl + 'media'; // Replace with your backend URL
+
   constructor(private http: HttpClient) {}
 
   // Process Audio API
@@ -40,5 +44,9 @@ export class ApiService {
 
   addAudioRecord(formData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}add-audio-record/`, formData);
+  }
+
+  reanalyzeAudio(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}reanalyze-audio/`, formData);
   }
 }

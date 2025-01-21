@@ -26,6 +26,7 @@ export class AudioProcessComponent implements OnInit {
   keywords: string = '';
   recordedAudioURL: string | null = null;
   detectedPrompts: any[] = [];
+  mediaURL: string = '';
 
   mediaRecorder: MediaRecorder | null = null;
   recordedChunks: Blob[] = [];
@@ -405,4 +406,41 @@ export class AudioProcessComponent implements OnInit {
   toggleViewMore(index: number, showFull: boolean): void {
     this.audioRecords[index].showFull = showFull;
   }
+
+  reanalyzeAudio(record: any): void {
+    if (!record.newKeywords || record.newKeywords.trim() === '') {
+      alert('Please enter keywords to analyze.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file_path', record.file_path); // Sending existing file path
+    formData.append('new_keywords', record.newKeywords);
+
+    this.apiService.reanalyzeAudio(formData).subscribe(
+      (response) => {
+        record.keywords_detected = response.detected_keywords;
+        alert('Audio reprocessed with new keywords!');
+      },
+      (error) => {
+        console.error('Error analyzing audio:', error);
+        alert('Error processing audio.');
+      }
+    );
+  }
+
+  formatFilePath(filePath: string): string {
+    this.mediaURL = this.apiService.mediaURL;
+    if (!filePath) {
+      return '';
+    }
+    // console.log(filePath.replace('.uploads/', ''));
+    // console.log(filePath.replace('.uploads/', this.mediaURL + '/'));
+    return filePath.replace('./uploads/', this.mediaURL + '/');
+    // return `${this.mediaURL}/${filePath.replace(./^uploads\//, '')}`;
+  }
+
+  // toggleViewKeywords(index: number, show: boolean): void {
+  //   this.filteredAudioRecords[index].showKeywords = show;
+  // }
 }
