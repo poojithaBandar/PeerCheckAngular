@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
   // Local
-  // private baseUrl = 'http://127.0.0.1:8000/api/'; // Replace with your backend UR
+  private baseUrl = 'http://127.0.0.1:8000/api/'; // Replace with your backend UR
 
   // Server
-  private baseUrl = 'http://13.52.99.241:80/api/';
+  // private baseUrl = 'http://13.52.99.241:80/api/';
   constructor(private http: HttpClient) {}
 
   // Process Audio API

@@ -6,32 +6,53 @@
     <input
       id="startPrompt"
       [(ngModel)]="startPrompt"
-      placeholder="Enter start prompt"
+      placeholder="Enter start prompt" class="form-control mb-2"
     />
 
     <label for="endPrompt">End Prompt:</label>
     <input
       id="endPrompt"
       [(ngModel)]="endPrompt"
-      placeholder="Enter end prompt"
+      placeholder="Enter end prompt" class="form-control mb-2"
     />
 
-    <button (click)="startRecording()" [disabled]="isRecording || isProcessing">
+    <label for="keywords">Keywords to Track (comma-separated):</label>
+  <input id="keywords" [(ngModel)]="keywords" placeholder="Enter keywords" class="form-control mb-2" />
+
+    <button (click)="startRecording()" [disabled]="isRecording || isProcessing" class="btn btn-primary">
       Start Recording
     </button>
-    <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing">
+    <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing" class="btn btn-danger">
       {{ isProcessing ? 'Processing...' : 'Stop Recording' }}
     </button>
   </div>
 
-  <hr />
+  <!-- Audio Player to Listen to the Recording -->
+  <div *ngIf="recordedAudioURL">
+    <h4>Recorded Audio</h4>
+    <audio controls>
+      <source [src]="recordedAudioURL" type="audio/wav" />
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <!-- Display Identified Prompts -->
+  <div *ngIf="detectedPrompts.length > 0">
+    <h3>Identified Prompts</h3>
+    <ul>
+      <li *ngFor="let prompt of detectedPrompts">
+        {{ prompt.word }} found at {{ prompt.timestamp }} seconds
+      </li>
+    </ul>
+  </div>
+
 
   <!-- Display audio_file data -->
   <div *ngIf="audioFileData" class="audio-details mt-4">
     <h3>Audio File Details</h3>
     <p><strong>File Path:</strong> {{ audioFileData.file_path }}</p>
     <p><strong>Transcription:</strong> {{ audioFileData.transcription }}</p>
-    <p><strong>Keywords Detected:</strong> {{ audioFileData.keywords_detected }}</p>
+    <p><strong>Keywords Detected:</strong> {{ audioFileData.detected_prompts }}</p>
     <p><strong>Status:</strong> {{ audioFileData.status }}</p>
     <p><strong>Duration:</strong> {{ audioFileData.duration }} seconds</p>
   </div>

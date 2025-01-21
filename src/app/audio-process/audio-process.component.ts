@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 export class AudioProcessComponent implements OnInit {
   selectedFile: File | null = null;
   audioFileData: any = null;
-  segments: string[] = [];
+  segments: any[] = [];
   isProcessing: boolean = false;
   errorMessage: string | null = null;
 
@@ -23,9 +23,13 @@ export class AudioProcessComponent implements OnInit {
   endPrompt: string = '';
   promptsMessage: string | null = null;
   isRecording: boolean = false;
+  keywords: string = '';
+  recordedAudioURL: string | null = null;
+  detectedPrompts: any[] = [];
 
   mediaRecorder: MediaRecorder | null = null;
   recordedChunks: Blob[] = [];
+  transcription: string = '';
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -80,9 +84,13 @@ export class AudioProcessComponent implements OnInit {
       formData.append('file', this.selectedFile);
       formData.append('start_prompt', this.startPrompt);
       formData.append('end_prompt', this.endPrompt);
+      formData.append('keywords', this.keywords);
       this.apiService.processAudio(formData).subscribe({
         next: (response) => {
           this.audioFileData = response.audio_file;
+          this.transcription = response.transcription;
+          this.detectedPrompts = response.detected_prompts;
+          this.keywords = response.keywords;
           this.segments = response.extracted_text;
           this.isProcessing = false;
           Swal.fire(
@@ -162,6 +170,8 @@ export class AudioProcessComponent implements OnInit {
 
           this.mediaRecorder.onstop = () => {
             const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+            // const audioBlob = new Blob(this.recordedChunks, { type: 'audio/wav' });
+            this.recordedAudioURL = URL.createObjectURL(blob);
             this.convertToWav(blob);
             this.isRecording = false;
             this.isProcessing = true;
@@ -280,73 +290,74 @@ export class AudioProcessComponent implements OnInit {
     formData.append('file', file);
     formData.append('start_prompt', this.startPrompt);
     formData.append('end_prompt', this.endPrompt);
+    formData.append('keywords', this.keywords);
 
-    const keywords = [
-      'AI',
-      'Machine Learning',
-      'Neural Networks',
-      'Cloud Computing',
-      'Blockchain',
-      'Robotics',
-      'Crypto',
-      'Healthcare',
-      'Mental Health',
-      'Stocks',
-      'Doctors',
-      'Students',
-      'Graduation',
-      'Movies',
-      'Music',
-      'Football',
-      'Tennis',
-      'Sustainability',
-      'Climate Change',
-      'Elections',
-      'Education',
-      'Finance',
-      'Investment',
-      'Bonds',
-      'Banking',
-      'Marketing',
-      'Sales',
-      'Networking',
-      'Leadership',
-      'Consulting',
-      'Entertainment',
-      'Gaming',
-      'Podcasts',
-      'Olympics',
-      'Cricket',
-      'Rugby',
-      'Baseball',
-      'Renewable Energy',
-      'Recycling',
-      'Pollution',
-      'Cybersecurity',
-      'Data Privacy',
-      'Innovation',
-      'Artificial Intelligence',
-      'Data Science',
-      'Deep Learning',
-      'Natural Language Processing',
-      'IoT',
-      'Agriculture',
-      'Automation',
-      'Smart Cities',
-      'Smart Homes',
-      'Augmented Reality',
-      'Virtual Reality',
-      'Cloud Storage',
-      'Big Data',
-      'Business Intelligence',
-      'Digital Transformation',
-    ];
-    formData.append('keywords', keywords.join(','));
+    // const keywords = [
+    //   'AI',
+    //   'Machine Learning',
+    //   'Neural Networks',
+    //   'Cloud Computing',
+    //   'Blockchain',
+    //   'Robotics',
+    //   'Crypto',
+    //   'Healthcare',
+    //   'Mental Health',
+    //   'Stocks',
+    //   'Doctors',
+    //   'Students',
+    //   'Graduation',
+    //   'Movies',
+    //   'Music',
+    //   'Football',
+    //   'Tennis',
+    //   'Sustainability',
+    //   'Climate Change',
+    //   'Elections',
+    //   'Education',
+    //   'Finance',
+    //   'Investment',
+    //   'Bonds',
+    //   'Banking',
+    //   'Marketing',
+    //   'Sales',
+    //   'Networking',
+    //   'Leadership',
+    //   'Consulting',
+    //   'Entertainment',
+    //   'Gaming',
+    //   'Podcasts',
+    //   'Olympics',
+    //   'Cricket',
+    //   'Rugby',
+    //   'Baseball',
+    //   'Renewable Energy',
+    //   'Recycling',
+    //   'Pollution',
+    //   'Cybersecurity',
+    //   'Data Privacy',
+    //   'Innovation',
+    //   'Artificial Intelligence',
+    //   'Data Science',
+    //   'Deep Learning',
+    //   'Natural Language Processing',
+    //   'IoT',
+    //   'Agriculture',
+    //   'Automation',
+    //   'Smart Cities',
+    //   'Smart Homes',
+    //   'Augmented Reality',
+    //   'Virtual Reality',
+    //   'Cloud Storage',
+    //   'Big Data',
+    //   'Business Intelligence',
+    //   'Digital Transformation',
+    // ];
+    // formData.append('keywords', keywords.join(','));
 
     this.apiService.processAudio(formData).subscribe(
       (response) => {
         this.audioFileData = response.audio_file;
-        this.segments = response.extracted_text;
+        this.segments = response.detected_prompts;
         this.isProcessing = false;
         this.isRecording = false;
         Swal.fire(
