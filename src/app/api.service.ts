@@ -7,13 +7,13 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
   // Local
-  private backendUrl = 'http://127.0.0.1:8000/';
+  private backendUrl = 'http://127.0.0.1:8000';
   // Server
-  // private backendUrl = 'https://54.193.137.246/';
+  // private backendUrl = 'https://api.hask.app';
 
   // Local
-  private baseUrl = this.backendUrl + 'api/'; // Replace with your backend UR
-  public mediaURL = this.backendUrl + 'media'; // Replace with your backend URL
+  private baseUrl = this.backendUrl + '/api/'; // Replace with your backend UR
+  public mediaURL = this.backendUrl + '/media/'; // Replace with your backend URL
 
   constructor(private http: HttpClient) {}
 

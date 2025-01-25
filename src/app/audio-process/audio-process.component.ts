@@ -429,16 +429,23 @@ export class AudioProcessComponent implements OnInit {
     );
   }
 
-  formatFilePath(filePath: string): string {
-    this.mediaURL = this.apiService.mediaURL;
-    if (!filePath) {
-      return '';
-    }
-    // console.log(filePath.replace('.uploads/', ''));
-    // console.log(filePath.replace('.uploads/', this.mediaURL + '/'));
-    return filePath.replace('./uploads/', this.mediaURL + '/');
-    // return `${this.mediaURL}/${filePath.replace(./^uploads\//, '')}`;
-  }
+  // formatFilePath(filePath: string): string {
+  //   this.mediaURL = this.apiService.mediaURL;
+
+  //   if (!filePath) {
+  //     return '';
+  //   }
+
+  //   // Normalize the file path by replacing both types of slashes with a consistent one (e.g., `/`)
+  //   const normalizedPath = filePath.replace(/\\/g, '/');
+
+  //   // Handle the case where the path starts with 'uploads/' or 'uploads\'
+  //   if (normalizedPath.startsWith('uploads/')) {
+  //     return `${this.mediaURL}/${normalizedPath.replace(/^uploads\//, '')}`;
+  //   }
+
+  //   return `${this.mediaURL}/${normalizedPath}`;
+  // }
 
   // toggleViewKeywords(index: number, show: boolean): void {
   //   this.filteredAudioRecords[index].showKeywords = show;
