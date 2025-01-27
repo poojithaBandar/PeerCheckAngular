@@ -1,34 +1,22 @@
-<div>
+<div class="container">
   <!-- Live Recording Section -->
-  <div>
-    <h3>Live Recording</h3>
-    <label for="startPrompt">Start Prompt:</label>
-    <input
-      id="startPrompt"
-      [(ngModel)]="startPrompt"
-      placeholder="Enter start prompt" class="form-control mb-2"
-    />
-
-    <label for="endPrompt">End Prompt:</label>
-    <input
-      id="endPrompt"
-      [(ngModel)]="endPrompt"
-      placeholder="Enter end prompt" class="form-control mb-2"
-    />
-
+  <div class="card">
+    <h3 class="section-title">Live Recording</h3>
     <label for="keywords">Keywords to Track (comma-separated):</label>
-  <input id="keywords" [(ngModel)]="keywords" placeholder="Enter keywords" class="form-control mb-2" />
+    <input id="keywords" [(ngModel)]="keywords" placeholder="Enter keywords" class="form-control mb-2" />
 
-    <button (click)="startRecording()" [disabled]="isRecording || isProcessing" class="btn btn-primary">
-      Start Recording
-    </button>
-    <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing" class="btn btn-danger">
-      {{ isProcessing ? 'Processing...' : 'Stop Recording' }}
-    </button>
+    <div class="recording-controls">
+      <button (click)="startRecording()" [disabled]="isRecording || isProcessing" class="btn btn-start">
+        Start Recording
+      </button>
+      <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing" class="btn btn-stop">
+        {{ isProcessing ? 'Processing...' : 'Stop Recording' }}
+      </button>
+    </div>
   </div>
 
   <!-- Audio Player to Listen to the Recording -->
-  <div *ngIf="recordedAudioURL">
+  <div *ngIf="recordedAudioURL" class="card">
     <h4>Recorded Audio</h4>
     <audio controls>
       <source [src]="recordedAudioURL" type="audio/wav" />
@@ -37,7 +25,7 @@
   </div>
 
   <!-- Display Identified Prompts -->
-  <div *ngIf="detectedPrompts.length > 0">
+  <div *ngIf="detectedPrompts.length > 0" class="card">
     <h3>Identified Prompts</h3>
     <ul>
       <li *ngFor="let prompt of detectedPrompts">
@@ -46,9 +34,8 @@
     </ul>
   </div>
 
-
   <!-- Display audio_file data -->
-  <div *ngIf="audioFileData" class="audio-details mt-4">
+  <div *ngIf="audioFileData" class="card audio-details mt-4">
     <h3>Audio File Details</h3>
     <p><strong>File Path:</strong> {{ audioFileData.file_path }}</p>
     <p><strong>Transcription:</strong> {{ audioFileData.transcription }}</p>
@@ -58,7 +45,7 @@
   </div>
 
   <!-- Segments Display -->
-  <div *ngIf="segments && segments.length > 0" class="segments mt-4">
+  <div *ngIf="segments && segments.length > 0" class="card segments mt-4">
     <h3>Segments</h3>
     <ul>
       <li *ngFor="let segment of segments">{{ segment }}</li>
@@ -71,19 +58,15 @@
   </div>
 
   <!-- Audio Records Section -->
-  <div class="records-section mt-5">
+  <div class="records-section mt-5 card">
     <h2>Existing Audio Records</h2>
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      placeholder="Search records"
-      class="form-control mb-3"
-    />
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search records" class="form-control mb-3" />
 
     <div *ngIf="fetchErrorMessage" class="alert alert-danger">
       <p>{{ fetchErrorMessage }}</p>
     </div>
 
+    <!-- Records Table -->
     <table *ngIf="filteredAudioRecords.length > 0" class="table table-responsive">
       <thead>
         <tr>
@@ -95,10 +78,10 @@
           <th>Duration</th>
           <th>Actions</th>
           <th>Analyze Again</th>
-          <!-- <th>Download</th> -->
         </tr>
       </thead>
       <tbody>
+        <!-- Record Rows -->
         <tr *ngFor="let record of filteredAudioRecords; let i = index">
           <td>{{ record.id }}</td>
           <td>{{ record.file_path }}</td>
@@ -153,7 +136,7 @@
       </tbody>
     </table>
 
+    <!-- No Records Found Message -->
     <p *ngIf="filteredAudioRecords.length === 0">No records found.</p>
   </div>
-
-</div>
+</div>  

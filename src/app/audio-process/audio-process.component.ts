@@ -102,7 +102,7 @@ export class AudioProcessComponent implements OnInit {
             // Clear the prompts after processing
             this.startPrompt = '';
             this.endPrompt = '';
-            // window.location.reload(); // Reload the page after success
+            window.location.reload(); // Reload the page after success
           });
         },
         error: (error) => {
@@ -124,7 +124,7 @@ export class AudioProcessComponent implements OnInit {
               // Clear the prompts after processing
               this.startPrompt = '';
               this.endPrompt = '';
-              // window.location.reload(); // Reload the page after success
+              window.location.reload(); // Reload the page after success
             });
           } else {
             console.log('Failed to process audio. Please try again.');
@@ -133,7 +133,7 @@ export class AudioProcessComponent implements OnInit {
               // Clear the prompts after processing
               this.startPrompt = '';
               this.endPrompt = '';
-              // window.location.reload(); // Reload the page after success
+              window.location.reload(); // Reload the page after success
             });
           }
         },
@@ -143,14 +143,14 @@ export class AudioProcessComponent implements OnInit {
 
   // Start recording logic
   startRecording(): void {
-    if (!this.startPrompt || !this.endPrompt) {
-      Swal.fire(
-        'Warning!',
-        'Please provide both Start Prompt and End Prompt.',
-        'warning'
-      );
-      return;
-    }
+    // if (!this.startPrompt || !this.endPrompt) {
+    //   Swal.fire(
+    //     'Warning!',
+    //     'Please provide both Start Prompt and End Prompt.',
+    //     'warning'
+    //   );
+    //   return;
+    // }
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
@@ -176,6 +176,8 @@ export class AudioProcessComponent implements OnInit {
             this.convertToWav(blob);
             this.isRecording = false;
             this.isProcessing = true;
+            this.startPrompt = '';
+            this.endPrompt = '';
           };
 
           this.mediaRecorder.start();
@@ -416,15 +418,22 @@ export class AudioProcessComponent implements OnInit {
     const formData = new FormData();
     formData.append('file_path', record.file_path); // Sending existing file path
     formData.append('new_keywords', record.newKeywords);
+    formData.append('id', record.id);
 
     this.apiService.reanalyzeAudio(formData).subscribe(
       (response) => {
+        record.transcription = response.transcription;
+        record.detected_prompts = response.detected_prompts;
         record.keywords_detected = response.detected_keywords;
-        alert('Audio reprocessed with new keywords!');
+        Swal.fire(
+          'Success!',
+          'Audio reprocessed with new keywords!',
+          'success'
+        );
       },
       (error) => {
         console.error('Error analyzing audio:', error);
-        alert('Error processing audio.');
+        Swal.fire('Error!', 'Error processing audio.', 'error');
       }
     );
   }
