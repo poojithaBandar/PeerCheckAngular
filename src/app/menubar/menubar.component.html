@@ -1,0 +1,47 @@
+<div class="menubar-wrapper">
+  <div class="top-bar">
+    <div class="user-info">
+      <i class="fas fa-user-circle"></i>
+      <span>{{ username }}</span>
+    </div>
+    <div class="actions">
+      <app-theme-toggle></app-theme-toggle>
+      <button class="logout-button" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="menu-container">
+    <div class="peer-session-container">
+      <button class="peer-session-button" (click)="startPeerSession()">
+        <i class="fas fa-users"></i>
+        <div class="button-content">
+          <span class="title">Start Peer Session</span>
+          <span class="subtitle">Begin a new peer review session</span>
+        </div>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <h1>Dashboard</h1>
+    <nav class="menu-navigation">
+      <button class="menu-item" (click)="navigateTo('/dashboard')">
+        <i class="fas fa-th-large"></i>
+        <span>Dashboard</span>
+        <i class="fas fa-chevron-right arrow"></i>
+      </button>
+      <button class="menu-item" (click)="navigateTo('/analytics')">
+        <i class="fas fa-chart-bar"></i>
+        <span>Analytics</span>
+        <i class="fas fa-chevron-right arrow"></i>
+      </button>
+      <button class="menu-item" (click)="navigateTo('/settings')">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+        <i class="fas fa-chevron-right arrow"></i>
+      </button>
+    </nav>
+  </div>
+</div>

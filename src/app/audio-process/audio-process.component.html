@@ -1,142 +1,176 @@
 <div class="container">
-  <!-- Live Recording Section -->
-  <div class="card">
-    <h3 class="section-title">Live Recording</h3>
-    <label for="keywords">Keywords to Track (comma-separated):</label>
-    <input id="keywords" [(ngModel)]="keywords" placeholder="Enter keywords" class="form-control mb-2" />
+  <!-- Recording Section -->
+  <div class="card recording-section">
+    <div class="card-header">
+      <h3 class="section-title">Audio Recording</h3>
+      <div class="keywords-input">
+        <label for="keywords">Keywords to Track:</label>
+        <div class="input-container card">
+          <i class="fas fa-tags input-icon"></i>
+          <input 
+            id="keywords" 
+            [(ngModel)]="keywords" 
+            placeholder="Enter keywords (comma-separated)" 
+            class="form-control custom-input"
+          />
+        </div>
+      </div>
+    </div>
 
     <div class="recording-controls">
-      <button (click)="startRecording()" [disabled]="isRecording || isProcessing" class="btn btn-start">
-        Start Recording
+      <button 
+        (click)="startRecording()" 
+        [disabled]="isRecording || isProcessing" 
+        class="btn-record"
+        [class.active]="isRecording"
+      >
+        <i class="fas fa-microphone"></i>
+        <span>Start Recording</span>
       </button>
-      <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing" class="btn btn-stop">
-        {{ isProcessing ? 'Processing...' : 'Stop Recording' }}
+      <button 
+        (click)="stopRecording()" 
+        [disabled]="!isRecording || isProcessing" 
+        class="btn-stop"
+      >
+        <i class="fas" [class.fa-stop]="!isProcessing" [class.fa-spinner]="isProcessing" [class.fa-spin]="isProcessing"></i>
+        <span>{{ isProcessing ? 'Processing...' : 'Stop Recording' }}</span>
       </button>
+    </div>
+
+    <!-- Current Recording Preview -->
+    <div *ngIf="recordedAudioURL" class="current-recording">
+      <h4>Current Recording</h4>
+      <audio controls class="audio-player">
+        <source [src]="recordedAudioURL" type="audio/wav" />
+      </audio>
     </div>
   </div>
 
-  <!-- Audio Player to Listen to the Recording -->
-  <div *ngIf="recordedAudioURL" class="card">
-    <h4>Recorded Audio</h4>
-    <audio controls>
-      <source [src]="recordedAudioURL" type="audio/wav" />
-      Your browser does not support the audio element.
-    </audio>
-  </div>
+  <!-- Results Section -->
+  <div class="results-section" *ngIf="detectedPrompts.length > 0 || audioFileData">
+    <div class="card">
+      <h3>Analysis Results</h3>
+      
+      <!-- Prompts -->
+      <div *ngIf="detectedPrompts.length > 0" class="prompts-container">
+        <h4>Detected Keywords</h4>
+        <div class="prompt-list">
+          <div *ngFor="let prompt of detectedPrompts" class="prompt-item">
+            <span class="keyword">{{ prompt.word }}</span>
+            <span class="timestamp">{{ prompt.timestamp }}s</span>
+          </div>
+        </div>
+      </div>
 
-  <!-- Display Identified Prompts -->
-  <div *ngIf="detectedPrompts.length > 0" class="card">
-    <h3>Identified Prompts</h3>
-    <ul>
-      <li *ngFor="let prompt of detectedPrompts">
-        {{ prompt.word }} found at {{ prompt.timestamp }} seconds
-      </li>
-    </ul>
-  </div>
-
-  <!-- Display audio_file data -->
-  <div *ngIf="audioFileData" class="card audio-details mt-4">
-    <h3>Audio File Details</h3>
-    <p><strong>File Path:</strong> {{ audioFileData.file_path }}</p>
-    <p><strong>Transcription:</strong> {{ audioFileData.transcription }}</p>
-    <p><strong>Keywords Detected:</strong> {{ audioFileData.detected_keywords }}</p>
-    <p><strong>Status:</strong> {{ audioFileData.status }}</p>
-    <p><strong>Duration:</strong> {{ audioFileData.duration }} seconds</p>
-  </div>
-
-  <!-- Segments Display -->
-  <div *ngIf="segments && segments.length > 0" class="card segments mt-4">
-    <h3>Segments</h3>
-    <ul>
-      <li *ngFor="let segment of segments">{{ segment }}</li>
-    </ul>
-  </div>
-
-  <!-- Error Message -->
-  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-    <p>{{ errorMessage }}</p>
-  </div>
-
-  <!-- Audio Records Section -->
-  <div class="records-section mt-5 card">
-    <h2>Existing Audio Records</h2>
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search records" class="form-control mb-3" />
-
-    <div *ngIf="fetchErrorMessage" class="alert alert-danger">
-      <p>{{ fetchErrorMessage }}</p>
+      <!-- File Details -->
+      <div *ngIf="audioFileData" class="file-details">
+        <h4>Processing Details</h4>
+        <div class="details-grid">
+          <div class="detail-item">
+            <label>Status:</label>
+            <span [class.status-success]="audioFileData.status === 'completed'">
+              {{ audioFileData.status }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <label>Duration:</label>
+            <span>{{ audioFileData.duration }} seconds</span>
+          </div>
+          <div class="detail-item full-width">
+            <label>Transcription:</label>
+            <p>{{ audioFileData.transcription }}</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Records Table -->
-    <table *ngIf="filteredAudioRecords.length > 0" class="table table-responsive">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>File Path</th>
-          <th>Transcription</th>
-          <th>Keywords Detected</th>
-          <th>Status</th>
-          <th>Duration</th>
-          <th>Actions</th>
-          <th>Analyze Again</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Record Rows -->
-        <tr *ngFor="let record of filteredAudioRecords; let i = index">
-          <td>{{ record.id }}</td>
-          <td>{{ record.file_path }}</td>
-          <!-- <td>{{ formatFilePath(record.file_path) }}</td> -->
-          <td>
-            <span *ngIf="!record.showFull">
-              {{ record.transcription | slice: 0:100 }}...
-              <a href="javascript:void(0)" (click)="toggleViewMore(i, true)">View More</a>
+  <!-- Records Section -->
+  <div class="records-section">
+    <div class="card">
+      <div class="section-header">
+        <h3>Previous Recordings</h3>
+        <div class="input-container card">
+          <i class="fas fa-search input-icon"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            placeholder="Search recordings..." 
+            class="custom-input"
+          />
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="fetchErrorMessage" class="alert">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ fetchErrorMessage }}</span>
+      </div>
+
+      <!-- Records Grid -->
+      <div class="records-grid" *ngIf="filteredAudioRecords.length > 0">
+        <div *ngFor="let record of filteredAudioRecords; let i = index" class="record-card">
+          <div class="record-header">
+            <span class="record-id">#{{ record.id }}</span>
+            <span class="record-status" [class.completed]="record.status === 'completed'">
+              {{ record.status }}
             </span>
-            <span *ngIf="record.showFull">
-              {{ record.transcription }}
-              <a href="javascript:void(0)" (click)="toggleViewMore(i, false)">View Less</a>
-            </span>
-          </td>
-          <td>{{ record.keywords_detected }}</td>
-          <!-- <td>
-            <span *ngIf="!record.showKeywords">
-              {{ record.keywords_detected | slice: 0:100 }}...
-              <a href="javascript:void(0)" (click)="toggleViewKeywords(i, true)">View More</a>
-            </span>
-            <span *ngIf="record.showKeywords">
-              {{ record.keywords_detected }}
-              <a href="javascript:void(0)" (click)="toggleViewKeywords(i, false)">View Less</a>
-            </span>
-          </td> -->
-          <td>{{ record.status }}</td>
-          <td>{{ record.duration }} seconds</td>
-          <td>
-            
-            <audio controls>
-              <!-- <source [src]="formatFilePath(record.file_path)" type="audio/wav" /> -->
+          </div>
+
+          <div class="record-body">
+            <audio controls class="audio-player">
               <source [src]="record.file_path" type="audio/wav" />
-              Your browser does not support the audio element.
             </audio>
-          </td>
-          <td>
-            <input 
-              type="text" 
-              [(ngModel)]="record.newKeywords" 
-              placeholder="Enter new keywords (comma-separated)" 
-            />
-            <button (click)="reanalyzeAudio(record)" class="btn btn-primary">
-              Analyze Again
-            </button>
-          </td>
-          <!-- <td>
-            <button class="btn btn-secondary mt-2" (click)="downloadFile(record.file_path)">
-              Download
-            </button>            
-          </td> -->
-        </tr>
-      </tbody>
-    </table>
 
-    <!-- No Records Found Message -->
-    <p *ngIf="filteredAudioRecords.length === 0">No records found.</p>
+            <div class="record-content">
+              <div class="transcription">
+                <h5>Transcription</h5>
+                <p [class.truncated]="!record.showFull">
+                  {{ record.showFull ? record.transcription : (record.transcription | slice:0:100) }}
+                  <button 
+                    class="btn-link" 
+                    (click)="toggleViewMore(i, !record.showFull)"
+                  >
+                    {{ record.showFull ? 'Show Less' : 'Show More' }}
+                  </button>
+                </p>
+              </div>
+
+              <div class="keywords-section">
+                <h5>Keywords Found</h5>
+                <div class="keywords-list">
+                  <span *ngFor="let keyword of record.keywords_detected.split(',')" class="keyword-tag">
+                    {{ keyword.trim() }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="record-actions">
+              <input 
+                type="text" 
+                [(ngModel)]="record.newKeywords" 
+                placeholder="New keywords for analysis" 
+                class="reanalyze-input"
+              />
+              <button 
+                (click)="reanalyzeAudio(record)" 
+                class="btn-reanalyze"
+                [disabled]="!record.newKeywords"
+              >
+                <i class="fas fa-sync-alt"></i>
+                Reanalyze
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Records Message -->
+      <div *ngIf="filteredAudioRecords.length === 0" class="no-records">
+        <i class="fas fa-folder-open"></i>
+        <p>No recordings found</p>
+      </div>
+    </div>
   </div>
-</div>  
+</div>

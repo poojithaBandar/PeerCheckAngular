@@ -1,0 +1,111 @@
+<div class="peer-session-container">
+  <div class="start-session" *ngIf="!showAudioProcess">
+    <button class="start-button" (click)="startPeerSession()">
+      <i class="fas fa-users"></i>
+      <div class="button-content">
+        <span class="title">Start Peer Session</span>
+        <span class="subtitle">Begin a new peer review session</span>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </button>
+  </div>
+
+  <app-audio-process *ngIf="showAudioProcess"></app-audio-process>
+</div>
+
+<!-- <div class="container">
+  <div class="session-header">
+    <h2>Peer Review Session</h2>
+    <p class="session-info">Session ID: {{ sessionId }}</p>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">Live Recording</h3>
+    <label for="keywords">Keywords to Track (comma-separated):</label>
+    <input id="keywords" [(ngModel)]="keywords" placeholder="Enter keywords" class="form-control mb-2" />
+
+    <div class="recording-controls">
+      <button (click)="startRecording()" [disabled]="isRecording || isProcessing" class="btn btn-start">
+        Start Recording
+      </button>
+      <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing" class="btn btn-stop">
+        {{ isProcessing ? 'Processing...' : 'Stop Recording' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="recordedAudioURL" class="card">
+    <h4>Recorded Audio</h4>
+    <audio controls>
+      <source [src]="recordedAudioURL" type="audio/wav" />
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <div *ngIf="detectedPrompts.length > 0" class="card">
+    <h3>Identified Prompts</h3>
+    <ul>
+      <li *ngFor="let prompt of detectedPrompts">
+        {{ prompt.word }} found at {{ prompt.timestamp }} seconds
+      </li>
+    </ul>
+  </div>
+
+  <div class="records-section mt-5 card">
+    <h3>Session Records</h3>
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search records" class="form-control mb-3" />
+
+    <div *ngIf="fetchErrorMessage" class="alert alert-danger">
+      <p>{{ fetchErrorMessage }}</p>
+    </div>
+
+    <table *ngIf="filteredAudioRecords.length > 0" class="table table-responsive">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Recording</th>
+          <th>Transcription</th>
+          <th>Keywords Detected</th>
+          <th>Duration</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of filteredAudioRecords; let i = index">
+          <td>{{ record.id }}</td>
+          <td>
+            <audio controls>
+              <source [src]="record.file_path" type="audio/wav" />
+              Your browser does not support the audio element.
+            </audio>
+          </td>
+          <td>
+            <span *ngIf="!record.showFull">
+              {{ record.transcription | slice: 0:100 }}...
+              <a href="javascript:void(0)" (click)="toggleViewMore(i, true)">View More</a>
+            </span>
+            <span *ngIf="record.showFull">
+              {{ record.transcription }}
+              <a href="javascript:void(0)" (click)="toggleViewMore(i, false)">View Less</a>
+            </span>
+          </td>
+          <td>{{ record.keywords_detected }}</td>
+          <td>{{ record.duration }} seconds</td>
+          <td>
+            <input 
+              type="text" 
+              [(ngModel)]="record.newKeywords" 
+              placeholder="New keywords" 
+              class="form-control mb-2"
+            />
+            <button (click)="reanalyzeAudio(record)" class="btn btn-primary">
+              Analyze Again
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="filteredAudioRecords.length === 0">No session records found.</p>
+  </div>
+</div> -->

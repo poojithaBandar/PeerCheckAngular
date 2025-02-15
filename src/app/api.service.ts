@@ -31,7 +31,8 @@ export class ApiService {
   }
 
   fetchAudioRecords(): Observable<any> {
-    return this.http.get(`${this.baseUrl}audio-records/`);
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}audio-records/` + token);
   }
 
   // Method to save prompts
@@ -48,5 +49,55 @@ export class ApiService {
 
   reanalyzeAudio(formData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}reanalyze-audio/`, formData);
+  }
+
+  // User Registration API
+  register(userData: {
+    username: string;
+    email: string;
+    password: string;
+  }): Observable<any> {
+    return this.http.post(`${this.baseUrl}register/`, userData);
+  }
+
+  // User Login API
+  login(credentials: { username: string; password: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}login/`, credentials);
+  }
+
+  // getAudioRecords() {
+  //   return this.http.get(`${this.baseUrl}audio-records/`);
+  // }
+
+  // getUserSettings() {
+  //   return this.http.get(`${this.baseUrl}/users/settings`);
+  // }
+
+  // updateUserSettings(settings: any) {
+  //   return this.http.put(`${this.baseUrl}/users/settings`, settings);
+  // }
+
+  startPeerSession() {
+    return this.http.post(`${this.baseUrl}/peer-sessions/start`, {});
+  }
+
+  savePeerSessionRecording(audioBlob: Blob, keywords: string) {
+    const formData = new FormData();
+    formData.append('audio', audioBlob);
+    formData.append('keywords', keywords);
+    return this.http.post(`${this.baseUrl}/peer-sessions/recordings`, formData);
+  }
+
+  getPeerSessionRecordings() {
+    return this.http.get(`${this.baseUrl}/peer-sessions/recordings`);
+  }
+
+  reanalyzePeerSessionRecording(recordId: number, newKeywords: string) {
+    return this.http.post(
+      `${this.baseUrl}/peer-sessions/recordings/${recordId}/reanalyze`,
+      {
+        keywords: newKeywords,
+      }
+    );
   }
 }

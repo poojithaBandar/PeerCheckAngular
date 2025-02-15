@@ -1,0 +1,161 @@
+.peer-session-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.session-header {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: var(--background-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.session-info {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.start-session {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.start-button {
+  display: flex;
+  align-items: center;
+  padding: 20px 40px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease;
+  gap: 20px;
+  min-width: 400px;
+}
+
+.button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+.start-button .title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.start-button .subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.start-button:hover .fa-arrow-right {
+  transform: translateX(5px);
+}
+
+.start-button .fa-arrow-right {
+  transition: transform 0.3s ease;
+}
+
+.fa-users {
+  font-size: 1.5rem;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--background-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.section-title {
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.recording-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-start {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-stop {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.table th {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.alert {
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--error-color);
+}
+
+audio {
+  width: 100%;
+  margin: 10px 0;
+}

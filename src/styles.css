@@ -1,61 +1,86 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  /* Light theme variables */
+  --background-color: #ffffff;
+  --text-color: #2c3e50;
+  --border-color: #e0e0e0;
+  --input-background: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --primary-color: #3e91e5;
+  --primary-hover: #0056b3;
+  --error-color: #dc3545;
+}
+
+[data-theme="dark"] {
+  /* Dark theme variables */
+  --background-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --border-color: #404040;
+  --input-background: #2d2d2d;
+  --shadow-color: rgba(164, 164, 164, 0.3);
+  --primary-color: #3e91e5;
+  --primary-hover: #1f7ae0;
+  --error-color: #f64e60;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f8f9fa;
-  }
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  display: block;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    overflow-x: auto;
-    display: block;
-  }
-  
-  thead {
-    background-color: #007bff;
-    color: #ffffff;
-  }
-  
-  thead th {
-    padding: 10px;
-    text-align: left;
-    font-weight: bold;
-  }
-  
-  tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
-  }
-  
-  tbody tr:nth-child(even) {
-    background-color: #ffffff;
-  }
-  
-  tbody td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  tbody tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Links for View More/Less */
-  a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
+thead {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+thead th {
+  padding: 10px;
+  text-align: left;
+  font-weight: bold;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+tbody td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Links for View More/Less */
+a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: underline;
+}
