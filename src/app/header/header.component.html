@@ -1,13 +1,21 @@
-<nav class="header-nav" *ngIf="username">
-    <div class="nav-left"> <a class="nav-brand" routerLink="/dashboard" routerLinkActive="active">PeerCheck</a>
-        <div class="nav-links" > <a (click)="navigateTo('/dashboard')" [routerLinkActive]="'active'">Dashboard</a> <a
-                (click)="navigateTo('/analytics')" [routerLinkActive]="'active'">Analytics</a> <a
-                (click)="navigateTo('/peer-session/start')" [routerLinkActive]="'active'">Peer Session</a> </div>
+<nav class="header-nav">
+    <div class="nav-left">
+        <a class="nav-brand" routerLink="/dashboard" routerLinkActive="active">PeerCheck</a>
+        <div class="nav-links" *ngIf="showNavigation()">
+            <a (click)="navigateTo('/dashboard')" [routerLinkActive]="'active'">Dashboard</a>
+            <!-- <a (click)="navigateTo('/analytics')" [routerLinkActive]="'active'">Analytics</a> -->
+            <a (click)="navigateTo('/peer-session/start')" [routerLinkActive]="'active'">Peer Session</a>
+        </div>
     </div>
-    <div class="nav-right" > <app-theme-toggle></app-theme-toggle>
-        <div class="user-menu"> <i class="fas fa-user-circle"></i> <span>{{ username }}</span>
-            <div class="dropdown-menu"> <a (click)="navigateTo('/settings')">Settings</a> <a
-                    (click)="logout()">Logout</a> </div>
+    <div class="nav-right">
+        <app-theme-toggle></app-theme-toggle>
+        <div class="user-menu" *ngIf="showNavigation()">
+            <i class="fas fa-user-circle"></i>
+            <span>{{ username }}</span>
+            <div class="dropdown-menu">
+                <a (click)="navigateTo('/settings')">Settings</a>
+                <a (click)="logout()">Logout</a>
+            </div>
         </div>
     </div>
 </nav>

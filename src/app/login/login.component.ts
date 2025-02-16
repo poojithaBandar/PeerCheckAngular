@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../api.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +17,8 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
@@ -41,11 +44,23 @@ export class LoginComponent {
           localStorage.setItem('email', response.data[0].email);
           localStorage.setItem('lastLogin', response.data[0].last_login);
 
+          // Update auth status
+          this.authService.updateAuthStatus(true);
           this.router.navigate(['/dashboard']);
         }
       },
       (error) => {
         console.log(error);
+        Swal.fire({
+          title: 'Login Failed!',
+          text:
+            error.error?.message || 'Something went wrong. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          customClass: {
+            popup: 'custom-swal-popup',
+          },
+        });
       }
     );
   }
