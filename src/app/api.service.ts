@@ -65,6 +65,11 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}login/`, credentials);
   }
 
+  logout(): Observable<any> {
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.baseUrl}logout/` + token, {});
+  }
+
   // getAudioRecords() {
   //   return this.http.get(`${this.baseUrl}audio-records/`);
   // }

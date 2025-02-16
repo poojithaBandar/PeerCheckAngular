@@ -1,21 +1,39 @@
 <nav class="header-nav">
     <div class="nav-left">
-        <a class="nav-brand" routerLink="/dashboard" routerLinkActive="active">PeerCheck</a>
-        <div class="nav-links" *ngIf="showNavigation()">
-            <a (click)="navigateTo('/dashboard')" [routerLinkActive]="'active'">Dashboard</a>
-            <!-- <a (click)="navigateTo('/analytics')" [routerLinkActive]="'active'">Analytics</a> -->
-            <a (click)="navigateTo('/peer-session/start')" [routerLinkActive]="'active'">Peer Session</a>
+        <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu" *ngIf="showNavigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a class="nav-brand" [routerLink]="['/dashboard']" routerLinkActive="active">PeerCheck</a>
+        <!-- Desktop Navigation Links -->
+        <div class="nav-links" *ngIf="showNavigation">
+            <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
+            <a [routerLink]="['/peer-session/start']" routerLinkActive="active">Peer Session</a>
         </div>
     </div>
+
     <div class="nav-right">
         <app-theme-toggle></app-theme-toggle>
-        <div class="user-menu" *ngIf="showNavigation()">
-            <i class="fas fa-user-circle"></i>
-            <span>{{ username }}</span>
+        <div class="user-menu" *ngIf="showNavigation">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span class="username">{{ username }}</span>
+            </div>
             <div class="dropdown-menu">
-                <a (click)="navigateTo('/settings')">Settings</a>
-                <a (click)="logout()">Logout</a>
+                <a [routerLink]="['/settings']" routerLinkActive="active">Settings</a>
+                <a (click)="logout()" class="logout-link">Logout</a>
             </div>
         </div>
     </div>
 </nav>
+
+<!-- Mobile Navigation Menu -->
+<div class="mobile-nav-menu" [class.active]="isMobileMenuOpen" *ngIf="showNavigation">
+    <div class="mobile-nav-links">
+        <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobileMenu()">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a [routerLink]="['/peer-session/start']" routerLinkActive="active" (click)="closeMobileMenu()">
+            <i class="fas fa-users"></i> Peer Session
+        </a>
+    </div>
+</div>
