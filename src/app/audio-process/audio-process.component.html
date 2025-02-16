@@ -68,7 +68,7 @@
         <div class="details-grid">
           <div class="detail-item">
             <label>Status:</label>
-            <span [class.status-success]="audioFileData.status === 'completed'">
+            <span [class.status-success]="audioFileData.status === 'processed'">
               {{ audioFileData.status }}
             </span>
           </div>
@@ -112,7 +112,7 @@
         <div *ngFor="let record of filteredAudioRecords; let i = index" class="record-card">
           <div class="record-header">
             <span class="record-id">#{{ record.id }}</span>
-            <span class="record-status" [class.completed]="record.status === 'completed'">
+            <span class="record-status" [class.completed]="record.status === 'processed'" [class.reanalyzed]="record.status === 'reanalyzed'">
               {{ record.status }}
             </span>
           </div>

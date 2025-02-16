@@ -313,6 +313,11 @@ input[type="file"]::-webkit-file-upload-button:hover {
   color: #28a745;
 }
 
+.record-status.reanalyzed {
+  background: rgba(0, 123, 255, 0.1);
+  color: var(--primary-color);
+}
+
 .audio-player {
   width: 100%;
   margin: 16px 0;
@@ -450,4 +455,205 @@ input[type="file"]::-webkit-file-upload-button:hover {
   .section-header h3 {
     margin-bottom: 0;
   }
+}
+
+/* Records Section Styles */
+.records-section {
+  margin-top: 32px;
+}
+
+.records-section .card {
+  background: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.records-grid {
+  display: grid;
+  gap: 24px;
+  padding: 24px;
+}
+
+/* Record Card Styles */
+.record-card {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.record-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.record-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.record-body {
+  padding: 16px;
+}
+
+.record-content {
+  margin: 16px 0;
+}
+
+/* Audio Player Styles */
+.audio-player {
+  width: 100%;
+  height: 36px;
+  margin: 12px 0;
+}
+
+/* Keywords and Tags Styles */
+.keywords-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.keyword-tag {
+  background: var(--primary-color-light);
+  color: var(--primary-color);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+}
+
+/* Desktop View */
+@media screen and (min-width: 769px) {
+  .records-grid {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+
+  .section-header {
+    flex-direction: row;
+    padding: 24px 32px;
+  }
+
+  .input-container {
+    width: 300px;
+  }
+
+  .record-card {
+    padding: 0;
+  }
+
+  .record-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .reanalyze-input {
+    flex: 1;
+  }
+}
+
+/* Mobile View */
+@media screen and (max-width: 768px) {
+  .records-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .input-container {
+    width: 100%;
+  }
+
+  .record-header {
+    padding: 12px;
+  }
+
+  .record-body {
+    padding: 12px;
+  }
+
+  .record-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-reanalyze {
+    width: 100%;
+  }
+
+  .audio-player {
+    height: 32px;
+  }
+}
+
+/* Common Styles for Both Views */
+.record-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.transcription {
+  margin: 16px 0;
+}
+
+.transcription h5 {
+  margin-bottom: 8px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.transcription p {
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.transcription p.truncated {
+  position: relative;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  padding: 0;
+  font-size: 0.875rem;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.no-records {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-color-light);
+}
+
+.no-records i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
 }
