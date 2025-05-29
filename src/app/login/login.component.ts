@@ -13,7 +13,6 @@ import { AuthService } from '../services/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   submitted = false;
-  showPassword = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -64,10 +63,6 @@ export class LoginComponent {
         });
       }
     );
-  }
-
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
   }
 
   goToRegister() {
