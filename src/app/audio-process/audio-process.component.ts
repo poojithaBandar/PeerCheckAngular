@@ -42,7 +42,21 @@ export class AudioProcessComponent implements OnInit {
   fetchAudioRecords(): void {
     this.apiService.fetchAudioRecords().subscribe({
       next: (response) => {
-        this.audioRecords = response.audio_records;
+        this.audioRecords = response.audio_records.map((record: any) => {
+          let parsed: any[] = [];
+          if (record.transcription) {
+            try {
+              parsed = JSON.parse(record.transcription);
+            } catch (e) {
+              console.error(
+                'Failed to parse transcription for record',
+                record.id,
+                e
+              );
+            }
+          }
+          return { ...record, parsedTranscription: parsed, showFull: false };
+        });
       },
       error: (err) => {
         this.fetchErrorMessage = 'Failed to fetch audio records.';
@@ -423,6 +437,14 @@ export class AudioProcessComponent implements OnInit {
     this.apiService.reanalyzeAudio(formData).subscribe(
       (response) => {
         record.transcription = response.transcription;
+        try {
+          record.parsedTranscription = response.transcription
+            ? JSON.parse(response.transcription)
+            : [];
+        } catch (e) {
+          console.error('Failed to parse transcription', e);
+          record.parsedTranscription = [];
+        }
         record.detected_prompts = response.detected_prompts;
         record.keywords_detected = response.detected_keywords;
         Swal.fire(
