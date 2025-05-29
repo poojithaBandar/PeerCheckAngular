@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
     private apiservice: ApiService
   ) {}
 
@@ -81,6 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.username = null;
     this.isLoggedIn = false;
     this.isMobileMenuOpen = false;
+    this.authService.logOut();
     this.router.navigate(['/login']);
   }
 }

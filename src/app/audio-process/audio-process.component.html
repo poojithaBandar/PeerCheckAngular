@@ -87,7 +87,7 @@
 
   <div class="upload-section mb-4">
     <div class="card shadow-sm text-center p-4">
-      <input type="file" #uploadInput accept=".wav" class="d-none" (change)="onFileSelected($event)">
+      <input type="file" #uploadInput accept=".wav" (change)="onFileSelected($event)">
       <button type="button" class="btn btn-outline-primary" (click)="processAudio(true)">
         <i class="fas fa-upload me-2"></i>Upload Audio
       </button>

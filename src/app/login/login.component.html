@@ -9,13 +9,18 @@
           <div *ngIf="loginForm.controls['username'].errors['required']">Username is required</div>
         </div>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-control" formControlName="password">
+      <div class=" mb-3 ">
+        <label for="password" class="form-label">Password</label>
+        <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control" formControlName="password"
+placeholder="Password"/>
+        <span class="position-absolute top-50 end-0 translate-middle-y pe-3 pt-4 password-toggle" (click)="togglePasswordVisibility()"
+[attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <i class="fas" [ngClass]="{'fa-eye': !showPassword, 'fa-eye-slash': showPassword}"></i>
+        </span>
         <div *ngIf="submitted && loginForm.controls['password'].errors" class="text-danger small mt-1">
-          <div *ngIf="loginForm.controls['password'].errors['required']">Password is required</div>
+            <div *ngIf="loginForm.controls['password'].errors['required']">Password is required</div>
         </div>
-      </div>
+    </div>
       <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
     <button class="secondary-button btn btn-outline-primary w-100 mt-2" (click)="goToRegister()">Don't have an account yet? SignUp</button>

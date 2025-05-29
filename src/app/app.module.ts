@@ -20,6 +20,9 @@ import { HeaderComponent } from './header/header.component';
 import { ThemeToggleComponent } from './theme-toggle/theme-toggle.component';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // theme-toggle\theme-toggle.component
 
@@ -43,6 +46,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
     CommonModule, // Add CommonModule
   ],
   providers: [

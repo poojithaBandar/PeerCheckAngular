@@ -13,6 +13,7 @@ import { PeerSessionComponent } from './peer-session/peer-session.component';
 // import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
+  { path: '', component: AudioProcessComponent },
   { path: 'process-audio', component: AudioProcessComponent },
   { path: 'submit-feedback', component: FeedbackComponent },
   { path: 'add-record', component: AddRecordComponent }, // Add this route

@@ -43,7 +43,7 @@ export class AudioProcessComponent implements OnInit {
   fetchAudioRecords(): void {
     this.apiService.fetchAudioRecords().subscribe({
       next: (response) => {
-        this.audioRecords = response.audio_records.map((record: any) => {
+        this.audioRecords = response.results.map((record: any) => {
           const parsed = Array.isArray(record.transcription)
             ? record.transcription
             : [];

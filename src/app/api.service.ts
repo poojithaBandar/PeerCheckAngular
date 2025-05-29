@@ -21,8 +21,8 @@ export class ApiService {
   processAudio(formData: FormData): Observable<any> {
     // const formData = new FormData();
     // formData.append('file', file);
-
-    return this.http.post(`${this.baseUrl}process-audio/`, formData);
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.baseUrl}process-audio/`+token+'/', formData);
   }
 
   // Submit Feedback API
@@ -32,7 +32,7 @@ export class ApiService {
 
   fetchAudioRecords(): Observable<any> {
     const token = localStorage.getItem('token');
-    return this.http.get(`${this.baseUrl}audio-records/` + token);
+    return this.http.get(`${this.baseUrl}audio-records/` + token+'/');
   }
 
   // Method to save prompts
@@ -48,7 +48,8 @@ export class ApiService {
   }
 
   reanalyzeAudio(formData: FormData): Observable<any> {
-    return this.http.post(`${this.baseUrl}reanalyze-audio/`, formData);
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.baseUrl}reanalyze-audio/`+token+'/', formData);
   }
 
   // User Registration API
@@ -56,8 +57,14 @@ export class ApiService {
     username: string;
     email: string;
     password: string;
+    role: string
   }): Observable<any> {
     return this.http.post(`${this.baseUrl}register/`, userData);
+  }
+
+  saveSOP(object : any): Observable<any> {
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.baseUrl}sop/create/`+token+'/', object);
   }
 
   // User Login API
@@ -65,9 +72,19 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}login/`, credentials);
   }
 
+  getUserById(userId: number) {
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}admin/user/`+userId+'/'+token+'/');
+  }
+
+  getSOPById(sopID: number) {
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}sop/`+sopID+'/'+token+'/');
+  }
+
   logout(): Observable<any> {
     const token = localStorage.getItem('token');
-    return this.http.post(`${this.baseUrl}logout/` + token, {});
+    return this.http.post(`${this.baseUrl}logout/` + token+'/', {});
   }
 
   // getAudioRecords() {
@@ -95,6 +112,36 @@ export class ApiService {
 
   getPeerSessionRecordings() {
     return this.http.get(`${this.baseUrl}/peer-sessions/recordings`);
+  }
+
+  getDashboardSummary(){
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}`+'admin/dashboard-summary/' + token +'/');
+  }
+
+  getUsers(){
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}`+'admin/users/' + token +'/');
+  }
+
+  updateUser(userId : number,object : any){
+    const token = localStorage.getItem('token');
+    return this.http.put(`${this.baseUrl}`+'admin/user/'+userId + '/' + token +'/',object);
+  }
+
+  deleteUser(userId : number){
+    const token = localStorage.getItem('token');
+    return this.http.delete(`${this.baseUrl}`+'admin/user/'+userId + '/' + token +'/');
+  }
+
+  deleteSOP(sopID: number){
+    const token = localStorage.getItem('token');
+    return this.http.delete(`${this.baseUrl}`+'sop/'+sopID + '/' + token +'/');
+  }
+
+  getSOPs(){
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}`+'sop/list/' + token +'/');
   }
 
   reanalyzePeerSessionRecording(recordId: number, newKeywords: string) {
