@@ -628,6 +628,15 @@ input[type="file"]::-webkit-file-upload-button:hover {
   line-height: 1.5;
 }
 
+.transcription-line {
+  margin-bottom: 4px;
+}
+
+.speaker-name {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
 .transcription p.truncated {
   position: relative;
 }

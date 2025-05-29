@@ -125,15 +125,28 @@
             <div class="record-content">
               <div class="transcription">
                 <h5>Transcription</h5>
-                <p [class.truncated]="!record.showFull">
-                  {{ record.showFull ? record.transcription : (record.transcription | slice:0:100) }}
-                  <button 
-                    class="btn-link" 
+                <ng-container
+                  *ngIf="record.parsedTranscription?.length; else noTrans"
+                >
+                  <div
+                    *ngFor="let line of record.parsedTranscription; let idx = index"
+                    [hidden]="!record.showFull && idx >= 3"
+                    class="transcription-line"
+                  >
+                    <strong class="speaker-name">{{ line.speaker }}:</strong>
+                    <span>{{ line.text }}</span>
+                  </div>
+                  <button
+                    *ngIf="record.parsedTranscription.length > 3"
+                    class="btn-link"
                     (click)="toggleViewMore(i, !record.showFull)"
                   >
                     {{ record.showFull ? 'Show Less' : 'Show More' }}
                   </button>
-                </p>
+                </ng-container>
+                <ng-template #noTrans>
+                  <p>No transcription available.</p>
+                </ng-template>
               </div>
 
               <div class="keywords-section">

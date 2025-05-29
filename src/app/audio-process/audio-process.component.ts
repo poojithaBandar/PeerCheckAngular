@@ -30,7 +30,7 @@ export class AudioProcessComponent implements OnInit {
 
   mediaRecorder: MediaRecorder | null = null;
   recordedChunks: Blob[] = [];
-  transcription: string = '';
+  transcription: any[] = [];
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -42,7 +42,18 @@ export class AudioProcessComponent implements OnInit {
   fetchAudioRecords(): void {
     this.apiService.fetchAudioRecords().subscribe({
       next: (response) => {
-        this.audioRecords = response.audio_records;
+        this.audioRecords = response.audio_records.map((record: any) => {
+          const parsed = Array.isArray(record.transcription)
+            ? record.transcription
+            : [];
+          const text = parsed.map((p) => p.text).join(' ');
+          return {
+            ...record,
+            parsedTranscription: parsed,
+            transcriptionText: text,
+            showFull: false,
+          };
+        });
       },
       error: (err) => {
         this.fetchErrorMessage = 'Failed to fetch audio records.';
@@ -54,14 +65,11 @@ export class AudioProcessComponent implements OnInit {
   // Filter audio records
   get filteredAudioRecords(): any[] {
     if (!this.searchTerm.trim()) return this.audioRecords;
+    const lower = this.searchTerm.toLowerCase();
     return this.audioRecords.filter(
       (record) =>
-        record.file_path
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        record.transcription
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase())
+        record.file_path.toLowerCase().includes(lower) ||
+        record.transcriptionText.toLowerCase().includes(lower)
     );
   }
 
@@ -423,6 +431,12 @@ export class AudioProcessComponent implements OnInit {
     this.apiService.reanalyzeAudio(formData).subscribe(
       (response) => {
         record.transcription = response.transcription;
+        record.parsedTranscription = Array.isArray(response.transcription)
+          ? response.transcription
+          : [];
+        record.transcriptionText = record.parsedTranscription
+          .map((p: any) => p.text)
+          .join(' ');
         record.detected_prompts = response.detected_prompts;
         record.keywords_detected = response.detected_keywords;
         Swal.fire(
