@@ -1,0 +1,168 @@
+<div class="container py-4">
+  <h2 class="mb-4">Dashboard</h2>
+
+  <!-- Admin view -->
+  <div *ngIf="userRole === 'admin'">
+    <div class="mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">User Management</h4>
+        <div>
+          <button class="btn btn-sm btn-outline-secondary me-2" (click)="listUsers()">List Users</button>
+          <button class="btn btn-sm btn-primary" (click)="openCreateUser()">
+            <i class="bi bi-plus-lg me-1"></i>Create User
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="alertMessage" class="alert alert-{{alertType}} alert-dismissible fade show" role="alert">
+        {{alertMessage}}
+        <button type="button" class="btn-close" (click)="alertMessage=null"></button>
+      </div>
+
+      <div *ngIf="showUserList">
+        <div class="d-flex justify-content-end mb-2">
+          <input type="text" class="form-control form-control-sm w-auto" placeholder="Search users" [(ngModel)]="searchTerm">
+        </div>
+
+        <div class="table-responsive shadow rounded">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of pagedUsers">
+                <td>{{u.username}}</td>
+                <td>{{u.email}}</td>
+                <td><span class="badge bg-secondary">{{u.role}}</span></td>
+                <td>
+                  <span class="badge" [ngClass]="u.isActive ? 'bg-success' : 'bg-secondary'">{{u.isActive ? 'Active' : 'Inactive'}}</span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary me-1" (click)="editUser(u)"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(u)"><i class="bi bi-trash"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <nav class="mt-2">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="page===1">
+              <button class="page-link" (click)="page>1 && (page=page-1)">Prev</button>
+            </li>
+            <li class="page-item" [class.disabled]="(page*pageSize)>=users.length">
+              <button class="page-link" (click)="(page*pageSize)<users.length && (page=page+1)">Next</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">SOP Management</h4>
+        <button class="btn btn-sm btn-primary" disabled>Create SOP</button>
+      </div>
+      <div class="table-responsive shadow rounded">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Version</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of sops">
+              <td>{{s.name}}</td>
+              <td>{{s.version}}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1" disabled>Edit</button>
+                <button class="btn btn-sm btn-outline-danger" disabled>Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operator/Reviewer view -->
+  <div *ngIf="userRole !== 'admin'">
+    <div class="row g-3">
+      <div class="col-sm-6 col-lg-4" *ngFor="let file of audioFiles">
+        <div class="card shadow-sm h-100">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{file.name}}</h5>
+            <audio class="w-100 mb-2" controls [src]="file.url"></audio>
+            <div class="mb-2">
+              <strong>Transcription</strong>
+              <p class="small mb-0">
+                {{file.showFull ? file.transcription : (file.transcription | slice:0:100)}}
+                <span *ngIf="!file.showFull && file.transcription.length>100">...</span>
+              </p>
+              <a href="#" (click)="file.showFull=!file.showFull; $event.preventDefault()">{{file.showFull ? 'Show Less' : 'Show More'}}</a>
+            </div>
+            <div class="mb-2">
+              <span *ngFor="let k of file.keywords" class="badge bg-info text-dark me-1">{{k}}</span>
+            </div>
+            <div class="mt-auto input-group input-group-sm">
+              <input type="text" class="form-control" placeholder="Add keywords">
+              <button class="btn btn-outline-secondary">Reanalyse</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{selectedUser ? 'Edit User' : 'Create User'}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" [(ngModel)]="newUser.username">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" [(ngModel)]="newUser.email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" [(ngModel)]="newUser.name">
+        </div>
+        <div class="mb-3" *ngIf="!selectedUser">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" [(ngModel)]="newUser.password">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select class="form-select" [(ngModel)]="newUser.role">
+            <option value="admin">Admin</option>
+            <option value="operator">Operator</option>
+            <option value="reviewer">Reviewer</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" (click)="saveUser()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
