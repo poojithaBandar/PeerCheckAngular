@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { ChangeDetectorRef } from '@angular/core';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-audio-process',
@@ -31,7 +33,7 @@ export class AudioProcessComponent implements OnInit {
   mediaRecorder: MediaRecorder | null = null;
   recordedChunks: Blob[] = [];
   transcription: any[] = [];
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private ngZone: NgZone,private apiService: ApiService, private router: Router, private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.fetchAudioRecords();
@@ -53,6 +55,7 @@ export class AudioProcessComponent implements OnInit {
             showFull: false,
           };
         });
+        this.changeDetector.detectChanges();
       },
       error: (err) => {
         this.fetchErrorMessage = 'Failed to fetch audio records.';
@@ -84,10 +87,20 @@ export class AudioProcessComponent implements OnInit {
     this.errorMessage = null;
   }
 
+  private resetStateAfterProcessing(): void {
+    this.startPrompt = '';
+    this.endPrompt = '';
+    this.isRecording = false;
+    this.isProcessing = false;
+     this.changeDetector.detectChanges();  // Ensures buttons are reset correctly
+  }
+
   // Process audio
-  processAudio(): void {
+  processAudio(isFileUpload ? :boolean): void {
     if (this.selectedFile) {
-      this.isProcessing = true;
+      if(!isFileUpload){
+        this.isProcessing = true;
+      }
       const formData = new FormData();
       formData.append('file', this.selectedFile);
       formData.append('start_prompt', this.startPrompt);
@@ -100,16 +113,13 @@ export class AudioProcessComponent implements OnInit {
           this.detectedPrompts = response.detected_prompts;
           this.keywords = response.keywords;
           this.segments = response.extracted_text;
-          this.isProcessing = false;
+          this.fetchAudioRecords();
           Swal.fire(
             'Success!',
             'Audio file processed successfully!',
             'success'
           ).then(() => {
-            // Clear the prompts after processing
-            this.startPrompt = '';
-            this.endPrompt = '';
-            window.location.reload(); // Reload the page after success
+            this.resetStateAfterProcessing();
           });
         },
         error: (error) => {
@@ -117,8 +127,7 @@ export class AudioProcessComponent implements OnInit {
           // this.isProcessing = false;
           // console.error(err);
           // Swal.fire('Error!', this.errorMessage, 'error');
-          this.isProcessing = false;
-          this.isRecording = false;
+          this.resetStateAfterProcessing();
           if (
             error.error.error === 'Start or End Prompt not found in the audio.'
           ) {
@@ -138,9 +147,7 @@ export class AudioProcessComponent implements OnInit {
             this.errorMessage = 'Failed to process audio. Please try again.';
             Swal.fire('Error!', this.errorMessage, 'error').then(() => {
               // Clear the prompts after processing
-              this.startPrompt = '';
-              this.endPrompt = '';
-              window.location.reload(); // Reload the page after success
+              this.resetStateAfterProcessing();// Reload the page after success
             });
           }
         },
@@ -177,6 +184,7 @@ export class AudioProcessComponent implements OnInit {
           };
 
           this.mediaRecorder.onstop = () => {
+            this.ngZone.run(() => { 
             const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
             // const audioBlob = new Blob(this.recordedChunks, { type: 'audio/wav' });
             this.recordedAudioURL = URL.createObjectURL(blob);
@@ -185,6 +193,7 @@ export class AudioProcessComponent implements OnInit {
             this.isProcessing = true;
             this.startPrompt = '';
             this.endPrompt = '';
+            });
           };
 
           this.mediaRecorder.start();
@@ -302,82 +311,19 @@ export class AudioProcessComponent implements OnInit {
     formData.append('end_prompt', this.endPrompt);
     formData.append('keywords', this.keywords);
 
-    // const keywords = [
-    //   'AI',
-    //   'Machine Learning',
-    //   'Neural Networks',
-    //   'Cloud Computing',
-    //   'Blockchain',
-    //   'Robotics',
-    //   'Crypto',
-    //   'Healthcare',
-    //   'Mental Health',
-    //   'Stocks',
-    //   'Doctors',
-    //   'Students',
-    //   'Graduation',
-    //   'Movies',
-    //   'Music',
-    //   'Football',
-    //   'Tennis',
-    //   'Sustainability',
-    //   'Climate Change',
-    //   'Elections',
-    //   'Education',
-    //   'Finance',
-    //   'Investment',
-    //   'Bonds',
-    //   'Banking',
-    //   'Marketing',
-    //   'Sales',
-    //   'Networking',
-    //   'Leadership',
-    //   'Consulting',
-    //   'Entertainment',
-    //   'Gaming',
-    //   'Podcasts',
-    //   'Olympics',
-    //   'Cricket',
-    //   'Rugby',
-    //   'Baseball',
-    //   'Renewable Energy',
-    //   'Recycling',
-    //   'Pollution',
-    //   'Cybersecurity',
-    //   'Data Privacy',
-    //   'Innovation',
-    //   'Artificial Intelligence',
-    //   'Data Science',
-    //   'Deep Learning',
-    //   'Natural Language Processing',
-    //   'IoT',
-    //   'Agriculture',
-    //   'Automation',
-    //   'Smart Cities',
-    //   'Smart Homes',
-    //   'Augmented Reality',
-    //   'Virtual Reality',
-    //   'Cloud Storage',
-    //   'Big Data',
-    //   'Business Intelligence',
-    //   'Digital Transformation',
-    // ];
-    // formData.append('keywords', keywords.join(','));
-
     this.apiService.processAudio(formData).subscribe(
       (response) => {
         this.audioFileData = response.audio_file;
         this.segments = response.detected_prompts;
         this.isProcessing = false;
         this.isRecording = false;
+        this.fetchAudioRecords();
         Swal.fire(
           'Success!',
           'Audio file processed successfully!',
           'success'
         ).then(() => {
-          this.startPrompt = '';
-          this.endPrompt = '';
-          // window.location.reload(); // Reload the page after success
+         this.resetStateAfterProcessing();
         });
       },
       (error) => {
