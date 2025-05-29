@@ -18,7 +18,7 @@ interface AudioRecord {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent  {
   audioRecords: AudioRecord[] = [];
   loading: boolean = true;
   error: string = '';
