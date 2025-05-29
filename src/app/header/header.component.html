@@ -1,12 +1,12 @@
-<nav class="header-nav">
+<nav class="header-nav" [ngClass]="{'bg-dark text-light': isDarkTheme, 'bg-light text-dark': !isDarkTheme}">
     <div class="nav-left">
         <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu" *ngIf="showNavigation">
             <i class="fas fa-bars"></i>
         </button>
-        <a class="nav-brand" [routerLink]="['/dashboard']" routerLinkActive="active">PeerCheck</a>
+        <a class="nav-brand" [routerLink]="[userRole === 'admin' ? '/admin' : '/dashboard']" routerLinkActive="active">PeerCheck</a>
         <!-- Desktop Navigation Links -->
         <div class="nav-links" *ngIf="showNavigation">
-            <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
+            <a [routerLink]="[userRole === 'admin' ? '/admin' : '/dashboard']" routerLinkActive="active">Dashboard</a>
             <a [routerLink]="['/peer-session/start']" routerLinkActive="active">Peer Session</a>
         </div>
     </div>
@@ -27,9 +27,9 @@
 </nav>
 
 <!-- Mobile Navigation Menu -->
-<div class="mobile-nav-menu" [class.active]="isMobileMenuOpen" *ngIf="showNavigation">
+<div class="mobile-nav-menu" [class.active]="isMobileMenuOpen" *ngIf="showNavigation" [ngClass]="{'bg-dark text-light': isDarkTheme, 'bg-light text-dark': !isDarkTheme}">
     <div class="mobile-nav-links">
-        <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobileMenu()">
+        <a [routerLink]="[userRole === 'admin' ? '/admin' : '/dashboard']" routerLinkActive="active" (click)="closeMobileMenu()">
             <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
         <a [routerLink]="['/peer-session/start']" routerLinkActive="active" (click)="closeMobileMenu()">

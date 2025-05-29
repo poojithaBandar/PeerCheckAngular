@@ -1,0 +1,23 @@
+.container {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  background-size: cover;
+  background-position: center;
+  border: none;
+  border-radius: 0.75rem;
+}
+
+.card.bg-primary {
+  background-image: linear-gradient(45deg, #1e3c72, #2a5298);
+}
+.card.bg-success {
+  background-image: linear-gradient(45deg, #11998e, #38ef7d);
+}
+.card.bg-info {
+  background-image: linear-gradient(45deg, #396afc, #2948ff);
+}
+.card.bg-warning {
+  background-image: linear-gradient(45deg, #f7971e, #ffd200);
+}

@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container my-4">
   <!-- Recording Section -->
-  <div class="card recording-section">
-    <div class="card-header">
+  <div class="card shadow recording-section mb-4">
+    <div class="card-header bg-transparent border-0">
       <h3 class="section-title">Audio Recording</h3>
-      <div class="keywords-input">
+      <div class="keywords-input mt-3">
         <label for="keywords">Keywords to Track:</label>
         <div class="input-container card">
           <i class="fas fa-tags input-icon"></i>
@@ -16,8 +16,8 @@
         </div>
       </div>
     </div>
-
-    <div class="recording-controls">
+    <div class="card-body">
+      <div class="recording-controls d-flex gap-3">
       <button 
         (click)="startRecording()" 
         [disabled]="isRecording || isProcessing" 
@@ -48,7 +48,7 @@
 
   <!-- Results Section -->
   <div class="results-section" *ngIf="detectedPrompts.length > 0 || audioFileData">
-    <div class="card">
+    <div class="card shadow p-4">
       <h3>Analysis Results</h3>
       
       <!-- Prompts -->
@@ -85,9 +85,19 @@
     </div>
   </div>
 
+  <!-- Upload Section -->
+  <div class="upload-section mb-4">
+    <div class="card shadow-sm text-center p-4">
+      <input type="file" #uploadInput accept=".wav" class="d-none" (change)="onFileSelected($event)">
+      <button type="button" class="btn btn-outline-primary" (click)="uploadInput.click()">
+        <i class="fas fa-upload me-2"></i>Upload Audio
+      </button>
+    </div>
+  </div>
+
   <!-- Records Section -->
   <div class="records-section">
-    <div class="card">
+    <div class="card shadow p-4">
       <div class="section-header">
         <h3>Previous Recordings</h3>
         <div class="input-container card">
@@ -109,21 +119,21 @@
 
       <!-- Records Grid -->
       <div class="records-grid" *ngIf="filteredAudioRecords.length > 0">
-        <div *ngFor="let record of filteredAudioRecords; let i = index" class="record-card">
-          <div class="record-header">
+        <div *ngFor="let record of filteredAudioRecords; let i = index" class="record-card card shadow-sm h-100">
+          <div class="record-header d-flex justify-content-between align-items-center bg-light p-2 border-bottom">
             <span class="record-id">#{{ record.id }}</span>
-            <span class="record-status" [class.completed]="record.status === 'processed'" [class.reanalyzed]="record.status === 'reanalyzed'">
+            <span class="record-status badge bg-secondary" [class.completed]="record.status === 'processed'" [class.reanalyzed]="record.status === 'reanalyzed'">
               {{ record.status }}
             </span>
           </div>
 
-          <div class="record-body">
+          <div class="record-body p-3">
             <audio controls class="audio-player">
               <source [src]="record.file_path" type="audio/wav" />
             </audio>
 
             <div class="record-content">
-              <div class="transcription">
+              <div class="transcription overflow-auto" style="max-height: 200px;">
                 <h5>Transcription</h5>
                 <ng-container
                 *ngIf="record.parsedTranscription?.length; else noTrans"
@@ -133,7 +143,7 @@
                   [hidden]="!record.showFull && idx >= 3"
                   class="transcription-line"
                 >
-                  <strong class="speaker-name">{{ line.speaker }}:</strong>
+                  <strong class="speaker-name fw-bold text-primary me-1">{{ line.speaker }}:</strong>
                   <span>{{ line.text }}</span>
                 </div>
                 <button
@@ -152,7 +162,7 @@
               <div class="keywords-section">
                 <h5>Keywords Found</h5>
                 <div class="keywords-list">
-                  <span *ngFor="let keyword of record.keywords_detected?.split(',')" class="keyword-tag">
+                  <span *ngFor="let keyword of record.keywords_detected?.split(',')" class="keyword-tag badge bg-primary-subtle text-primary me-1">
                     {{ keyword.trim() }}
                   </span>
                 </div>

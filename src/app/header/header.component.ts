@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
 import { ApiService } from '../api.service';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -13,28 +14,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
   username: string | null = null;
   isLoggedIn = false;
   isMobileMenuOpen = false;
+  isDarkTheme = false;
+  userRole: string | null = null;
   private authSubscription?: Subscription;
+  private themeSub?: Subscription;
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private apiservice: ApiService
+    private apiservice: ApiService,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
     this.initializeUser();
     this.setupAuthSubscription();
+    this.themeSub = this.themeService.currentTheme$.subscribe(t => {
+      this.isDarkTheme = t === 'dark';
+    });
   }
 
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+    if (this.themeSub) {
+      this.themeSub.unsubscribe();
+    }
   }
 
   private initializeUser(): void {
     if (typeof window !== 'undefined' && localStorage) {
       this.username = localStorage.getItem('username');
+      this.userRole = localStorage.getItem('userRole');
       this.isLoggedIn = !!this.username;
     }
   }
@@ -44,6 +56,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.isLoggedIn = status;
       if (status) {
         this.username = localStorage.getItem('username');
+        this.userRole = localStorage.getItem('userRole');
       }
     });
   }

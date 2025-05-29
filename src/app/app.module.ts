@@ -20,6 +20,8 @@ import { HeaderComponent } from './header/header.component';
 import { ThemeToggleComponent } from './theme-toggle/theme-toggle.component';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // theme-toggle\theme-toggle.component
 
@@ -35,7 +37,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     PeerSessionComponent, // Add PeerSessionComponent
     HeaderComponent,
     ThemeToggleComponent,
-    DashboardComponent
+    DashboardComponent,
+    AdminDashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -44,6 +47,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     FormsModule,
     ReactiveFormsModule,
     CommonModule, // Add CommonModule
+    NgbModule
   ],
   providers: [
     provideClientHydration(),

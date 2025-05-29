@@ -82,6 +82,7 @@ export class AudioProcessComponent implements OnInit {
     this.audioFileData = null;
     this.segments = [];
     this.errorMessage = null;
+    this.processAudio();
   }
 
   // Process audio

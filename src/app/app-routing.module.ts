@@ -7,6 +7,7 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { MenubarComponent } from './menubar/menubar.component'; // Add this import
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PeerSessionComponent } from './peer-session/peer-session.component';
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'menu', component: MenubarComponent }, // Add menubar route
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'admin', component: AdminDashboardComponent },
   { path: 'analytics', component: AnalyticsComponent },
   { path: 'settings', component: SettingsComponent },
   {

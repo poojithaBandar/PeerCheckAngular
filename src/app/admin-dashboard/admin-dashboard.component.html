@@ -1,0 +1,72 @@
+<div class="container py-4" [ngClass]="{'bg-dark text-light': isDarkTheme}">
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3" *ngFor="let kpi of kpis">
+      <div class="card text-center shadow-sm h-100 text-white {{kpi.bg}}">
+        <div class="card-body">
+          <div class="display-6 fw-bold">{{ kpi.count }}</div>
+          <div class="small">{{ kpi.label }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Management -->
+  <div class="d-flex gap-2 mb-3">
+    <button class="btn btn-primary" (click)="openCreateUser(createUserModal)">Create User</button>
+    <button class="btn btn-outline-secondary" (click)="toggleUserTable()">List Users</button>
+  </div>
+
+  <div class="table-responsive" *ngIf="showUserTable">
+    <table class="table table-striped table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <span class="badge" [class.bg-success]="user.status==='Active'" [class.bg-secondary]="user.status==='Inactive'">
+              {{ user.status }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Create User Modal -->
+  <ng-template #createUserModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Create User</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form class="d-grid gap-3">
+        <input class="form-control" placeholder="Username" />
+        <input class="form-control" placeholder="Email" />
+        <input class="form-control" placeholder="Name" />
+        <input type="password" class="form-control" placeholder="Password" />
+        <select class="form-select">
+          <option value="Admin">Admin</option>
+          <option value="Operator">Operator</option>
+        </select>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="modal.close('Save')">Save</button>
+    </div>
+  </ng-template>
+</div>
