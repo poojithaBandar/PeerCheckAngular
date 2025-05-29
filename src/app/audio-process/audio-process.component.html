@@ -126,19 +126,19 @@
               <div class="transcription">
                 <h5>Transcription</h5>
                 <ng-container
-                  *ngIf="record.parsedTranscription?.length; else noTrans"
+                *ngIf="record.parsedTranscription?.length; else noTrans"
+              >
+                <div
+                  *ngFor="let line of record.parsedTranscription; let idx = index"
+                  [hidden]="!record.showFull && idx >= 3"
+                  class="transcription-line"
                 >
-                  <div
-                    *ngFor="let line of record.parsedTranscription; let idx = index"
-                    [hidden]="!record.showFull && idx >= 3"
-                    class="transcription-line"
-                  >
-                    <strong class="speaker-name">{{ line.speaker }}:</strong>
-                    <span>{{ line.text }}</span>
-                  </div>
-                  <button
-                    *ngIf="record.parsedTranscription.length > 3"
-                    class="btn-link"
+                  <strong class="speaker-name">{{ line.speaker }}:</strong>
+                  <span>{{ line.text }}</span>
+                </div>
+                <button
+                  *ngIf="record.parsedTranscription.length > 3"
+                  class="btn-link"
                     (click)="toggleViewMore(i, !record.showFull)"
                   >
                     {{ record.showFull ? 'Show Less' : 'Show More' }}
@@ -152,7 +152,7 @@
               <div class="keywords-section">
                 <h5>Keywords Found</h5>
                 <div class="keywords-list">
-                  <span *ngFor="let keyword of record.keywords_detected.split(',')" class="keyword-tag">
+                  <span *ngFor="let keyword of record.keywords_detected?.split(',')" class="keyword-tag">
                     {{ keyword.trim() }}
                   </span>
                 </div>

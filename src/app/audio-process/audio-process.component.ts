@@ -30,8 +30,7 @@ export class AudioProcessComponent implements OnInit {
 
   mediaRecorder: MediaRecorder | null = null;
   recordedChunks: Blob[] = [];
-  transcription: string = '';
-
+  transcription: any[] = [];
   constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
@@ -43,19 +42,16 @@ export class AudioProcessComponent implements OnInit {
     this.apiService.fetchAudioRecords().subscribe({
       next: (response) => {
         this.audioRecords = response.audio_records.map((record: any) => {
-          let parsed: any[] = [];
-          if (record.transcription) {
-            try {
-              parsed = JSON.parse(record.transcription);
-            } catch (e) {
-              console.error(
-                'Failed to parse transcription for record',
-                record.id,
-                e
-              );
-            }
-          }
-          return { ...record, parsedTranscription: parsed, showFull: false };
+          const parsed = Array.isArray(record.transcription)
+            ? record.transcription
+            : [];
+          const text = parsed.map((p:any) => p.text).join(' ');
+          return {
+            ...record,
+            parsedTranscription: parsed,
+            transcriptionText: text,
+            showFull: false,
+          };
         });
       },
       error: (err) => {
@@ -68,14 +64,11 @@ export class AudioProcessComponent implements OnInit {
   // Filter audio records
   get filteredAudioRecords(): any[] {
     if (!this.searchTerm.trim()) return this.audioRecords;
+    const lower = this.searchTerm.toLowerCase();
     return this.audioRecords.filter(
       (record) =>
-        record.file_path
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        record.transcription
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase())
+        record.file_path.toLowerCase().includes(lower) ||
+        record.transcriptionText.toLowerCase().includes(lower)
     );
   }
 
@@ -437,14 +430,12 @@ export class AudioProcessComponent implements OnInit {
     this.apiService.reanalyzeAudio(formData).subscribe(
       (response) => {
         record.transcription = response.transcription;
-        try {
-          record.parsedTranscription = response.transcription
-            ? JSON.parse(response.transcription)
-            : [];
-        } catch (e) {
-          console.error('Failed to parse transcription', e);
-          record.parsedTranscription = [];
-        }
+        record.parsedTranscription = Array.isArray(response.transcription)
+        ? response.transcription
+        : [];
+      record.transcriptionText = record.parsedTranscription
+        .map((p: any) => p.text)
+        .join(' ');
         record.detected_prompts = response.detected_prompts;
         record.keywords_detected = response.detected_keywords;
         Swal.fire(
