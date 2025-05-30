@@ -215,7 +215,7 @@ export class DashboardComponent {
   }
   
   showSuccessToast() {
-    this.toasterService.success('User Added Successfully.','success',{ positionClass: 'toast-center-center'});
+    this.toasterService.success('User Added Successfully.', 'success');
   }
 
   onSubmit(modal: any): void {
