@@ -121,10 +121,11 @@ export class DashboardComponent {
         this.kpis[1].count = data.active_sessions;
         this.kpis[2].count = data.total_sops;
         this.kpis[3].count = data.pending_reviews;
-
+        this.toasterService.success('Data loaded successfully!', 'Success');
       },
       error: (err) => {
         console.error(err);
+        this.toasterService.error('Failed to load data.', 'Error');
       },
     })
   }
@@ -134,9 +135,11 @@ export class DashboardComponent {
     this.apiService.getUsers().subscribe({
       next: (data: any) => {
         this.users = data.results;
+        this.toasterService.success('Data loaded successfully!', 'Success');
       },
       error: (err) => {
         console.error(err);
+        this.toasterService.error('Failed to load data.', 'Error');
       },
     })
   }
@@ -145,9 +148,11 @@ export class DashboardComponent {
     this.apiService.getSOPs().subscribe({
       next: (data: any) => {
         this.sops = data.results;
+        this.toasterService.success('Data loaded successfully!', 'Success');
       },
       error: (err) => {
         console.error(err);
+        this.toasterService.error('Failed to load data.', 'Error');
       },
     })
   }
@@ -180,10 +185,11 @@ export class DashboardComponent {
         if (result === 'Confirm') {
           this.apiService.deleteUser(userId).subscribe({
             next: (data: any) => {
-              this.toasterService.show("test");
+              this.toasterService.success('Item deleted successfully!', 'Success');
             },
             error: (err) => {
               console.error(err);
+              this.toasterService.error('Failed to delete item.', 'Error');
             },
           })
         }
@@ -200,10 +206,11 @@ export class DashboardComponent {
         if (result === 'Confirm') {
           this.apiService.deleteSOP(sopId).subscribe({
             next: (data: any) => {
-              this.toasterService.show("test");
+              this.toasterService.success('Item deleted successfully!', 'Success');
             },
             error: (err) => {
               console.error(err);
+              this.toasterService.error('Failed to delete item.', 'Error');
             },
           })
         }
@@ -214,9 +221,6 @@ export class DashboardComponent {
     );
   }
   
-  showSuccessToast() {
-    this.toasterService.success('User Added Successfully.','success',{ positionClass: 'toast-center-center'});
-  }
 
   onSubmit(modal: any): void {
     if (this.createUserForm.valid) {
@@ -228,11 +232,12 @@ export class DashboardComponent {
             this.isEditing = false;
             this.editingUserId = null;
             modal.dismiss();
-            this.showSuccessToast();
+            this.toasterService.success('Item updated successfully!', 'Success');
             this.createUserForm.reset();
           },
           error: (err) => {
             console.error(err);
+            this.toasterService.error('Failed to update item.', 'Error');
           },
         })
       } else {
@@ -242,11 +247,12 @@ export class DashboardComponent {
             this.fetchUsers();
           }
           modal.dismiss();
-          this.showSuccessToast();
+          this.toasterService.success('Item created successfully!', 'Success');
           this.createUserForm.reset();
         },
         error: (err) => {
           console.error(err);
+          this.toasterService.error('Failed to create item.', 'Error');
         },
       })
     }
@@ -288,12 +294,13 @@ export class DashboardComponent {
             this.isSOPEditing = false;
             this.editingSOPId = null;
             modal.dismiss();
-            this.showSuccessToast();
+            this.toasterService.success('Item updated successfully!', 'Success');
             this.sopForm.reset();
             this.resetSOPSteps();
           },
           error: (err) => {
             console.error(err);
+            this.toasterService.error('Failed to update item.', 'Error');
           },
         })
       } else {
@@ -306,10 +313,11 @@ export class DashboardComponent {
           this.submitted = false;
           this.sopForm.reset();
           this.resetSOPSteps();
-          this.showSuccessToast();
+          this.toasterService.success('Item created successfully!', 'Success');
         },
         error: (err) => {
           console.error(err);
+          this.toasterService.error('Failed to create item.', 'Error');
         },
       })
     }
