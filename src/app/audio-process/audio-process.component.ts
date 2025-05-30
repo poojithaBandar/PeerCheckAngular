@@ -4,6 +4,15 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
+interface User {
+  username: string;
+  email: string;
+  name: string;
+  role: string;
+  is_active: boolean;
+  id: number;
+  selected : boolean ;
+}
 
 @Component({
   selector: 'app-audio-process',
@@ -37,16 +46,32 @@ export class AudioProcessComponent implements OnInit {
   tags: string[] = [];
   sops: any[] = [];
   selectedSOPID!: number;
+  users: User[] = [];
+  selectedUserIds:number[] = []
   constructor(private ngZone: NgZone,private apiService: ApiService, private router: Router, private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.fetchAudioRecords();
+    this.fetchUsers();
     this.fetchSOP();    
   }
 
-  onSOPChange(sopID: number): void {
-    this.selectedSOPID = sopID;
+  updateSelectedUsers(): void {
+    let selectedUsers = this.users.filter(user => user.selected);
+    this.selectedUserIds = selectedUsers.map(user => user.id);
   }
+
+  fetchUsers(){
+    this.apiService.getUsers().subscribe({
+      next: (data: any) => {
+        this.users = data.results;
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    })
+  }
+
   fetchSOP(){
     this.apiService.getSOPs().subscribe({
       next: (data: any) => {
@@ -135,7 +160,7 @@ export class AudioProcessComponent implements OnInit {
       formData.append('start_prompt', this.startPrompt);
       formData.append('end_prompt', this.endPrompt);
       formData.append('keywords', this.keywords);
-      // formData.append('SOPId', this.selectedSOPID);
+      formData.append('session_user_ids',JSON.stringify({'userIds':this.selectedUserIds}) );
       formData.append('sop_id', this.selectedSOPID.toString());
 
       this.apiService.processAudio(formData).subscribe({

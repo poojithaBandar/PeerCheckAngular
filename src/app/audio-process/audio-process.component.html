@@ -17,6 +17,18 @@
           {{ sop.name }} (Version: {{ sop.version }})
         </option>
       </select>
+      <div ngbDropdown class="d-inline-block">
+        <button class="btn btn-secondary" ngbDropdownToggle>
+          Select Users
+        </button>
+        <div ngbDropdownMenu class="p-3" style="max-height: 200px; overflow-y: auto;">
+          <div *ngFor="let user of users" class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="user.selected"
+(change)="updateSelectedUsers()" />
+            <label class="form-check-label ms-2">{{ user.name }}</label>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- <div class="keywords-section">
         <label class="keywords-label">
