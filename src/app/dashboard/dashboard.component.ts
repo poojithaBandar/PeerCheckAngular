@@ -269,20 +269,47 @@ export class DashboardComponent {
     this.steps.removeAt(index);
   }
 
+  resetSOPSteps(){
+    while (this.steps.length !== 0) {
+      this.steps.removeAt(0);
+    }
+  }
+
   onSOPSubmit(modal: any) {
     this.submitted = true;
     if (this.sopForm.valid) {
+      if(this.isSOPEditing  && this.editingSOPId !== null){
+        this.apiService.updateSOP(this.editingSOPId,this.sopForm.value).subscribe({
+          next: (data: any) => {
+            this.fetchSOP();
+            this.isSOPEditing = false;
+            this.editingSOPId = null;
+            modal.dismiss();
+            this.showSuccessToast();
+            this.sopForm.reset();
+            this.resetSOPSteps();
+          },
+          error: (err) => {
+            console.error(err);
+          },
+        })
+      } else {
       this.apiService.saveSOP(this.sopForm.value).subscribe({
         next: (data: any) => {
           modal.dismiss();
+          if(this.showSOPTable){
+            this.fetchSOP();
+          }
           this.submitted = false;
           this.sopForm.reset();
+          this.resetSOPSteps();
           this.showSuccessToast();
         },
         error: (err) => {
           console.error(err);
         },
       })
+    }
     }
   }
 

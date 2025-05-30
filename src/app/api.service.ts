@@ -134,6 +134,11 @@ export class ApiService {
     return this.http.put(`${this.baseUrl}`+'admin/user/'+userId + '/' + token +'/',object);
   }
 
+  updateSOP(sopId : number,object : any){
+    const token = localStorage.getItem('token');
+    return this.http.put(`${this.baseUrl}`+'sop/'+sopId + '/' + token +'/',object);
+  }
+
   deleteUser(userId : number){
     const token = localStorage.getItem('token');
     return this.http.delete(`${this.baseUrl}`+'admin/user/'+userId + '/' + token +'/');
