@@ -19,7 +19,7 @@
 
 .text-gray-900 {
     --tw-text-opacity: 1;
-    color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+    color: var(--text-color);
 }
 .font-bold {
     font-weight: 700;

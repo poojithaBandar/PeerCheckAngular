@@ -1,9 +1,7 @@
-<button 
-  (click)="toggleTheme()" 
-  class="theme-toggle-btn" 
-  [attr.aria-label]="isDarkTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+<button
+(click)="toggleTheme()"
+class="theme-toggle-btn btn btn-outline-secondary"
+[attr.aria-label]="isDarkTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
 >
-  <span class="material-icons">
-    {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
-  </span>
+<i class="bi" [ngClass]="isDarkTheme ? 'fa fa-sun' : 'fa fa-moon'"></i>
 </button>
