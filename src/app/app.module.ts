@@ -66,7 +66,7 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptor,
       multi: true
-    }
+    },
   ],
   bootstrap: [AppComponent],
 })
