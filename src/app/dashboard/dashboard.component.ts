@@ -2,6 +2,7 @@ import { animate, keyframes, query, stagger, state, style, transition, trigger }
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { timeStamp } from 'console';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../api.service';
 import { AuthService } from '../services/auth.service';
@@ -108,7 +109,9 @@ export class DashboardComponent {
   }
 
   ngOnInit(){
-    this.fetchDashboardSummary();
+    if(this.authService.getUserRole() == 'admin'){
+      this.fetchDashboardSummary();
+    }
   }
 
   fetchDashboardSummary(){
