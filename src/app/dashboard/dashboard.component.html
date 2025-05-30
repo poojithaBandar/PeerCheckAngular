@@ -53,9 +53,16 @@
       </span>
       <div class="btn-ripple"></div>
     </button>
+    <button class="btn btn-primary btn-animated position-relative overflow-hidden" (click)="openCreateSession(createSessionModal)">
+      <span class="btn-text">
+        <i class="fas fa-plus me-2"></i>
+        Create Session
+      </span>
+      <div class="btn-ripple"></div>
+    </button>
     @if(this.authService.getUserRole() == 'admin'){
     <button class="btn btn-outline-secondary btn-animated position-relative overflow-hidden"
- (click)="fetchUsers();toggleUserTable();">
+    (click)="fetchUsers();toggleUserTable();">
       <span class="btn-text text-color-theme">
         <i  class="fas fa-list me-2"></i>
         {{ showUserTable ? 'Hide Users' : 'List Users' }}
@@ -67,6 +74,13 @@
     <span class="btn-text text-color-theme">
       <i class="fas fa-list me-2"></i>
       {{ showSOPTable ? 'Hide SOPs' : 'List SOPs' }}
+    </span>
+    <div class="btn-ripple"></div>
+  </button>
+  <button class="btn btn-outline-secondary btn-animated position-relative overflow-hidden" (click)="fetchSessions();toggleSessionTable();">
+    <span class="btn-text text-color-theme">
+      <i class="fas fa-list me-2"></i>
+      {{ showSessionTable ? 'Hide Sessions' : 'List Sessions' }}
     </span>
     <div class="btn-ripple"></div>
   </button>
@@ -173,6 +187,42 @@
     </div>
   </div>
 }
+@if(showSessionTable){
+  <div class="container py-4">
+    <h4>Sessions List</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover animated-table m-0">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>SOP</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let session of sessions">
+            <td>{{ session.name }}</td>
+            <td>{{ session.sop_name }}</td>
+            <td>{{ session.status }}</td>
+            <td>{{ session.created_at | date:'medium' }}</td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary action-btn" (click)="editSession(session.id, createSessionModal)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger action-btn" (click)="openSessionDeleteModal(deleteSessionModal, session.id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+}
 <ng-template #deleteSOPModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Confirm Deletion</h4>
@@ -198,6 +248,65 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
       <button type="button" class="btn btn-danger" (click)="modal.close('Confirm')">Delete</button>
+    </div>
+  </ng-template>
+
+  <ng-template #deleteSessionModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Confirm Deletion</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to delete this session?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Confirm')">Delete</button>
+    </div>
+  </ng-template>
+
+  <ng-template #createSessionModal let-modal>
+    <div class="modal-header bg-primary text-white">
+      <h5 class="modal-title">
+        <i class="fas fa-user-plus me-2"></i>
+        {{isSessionEditing ? 'Update Session' : 'New Session'}}
+      </h5>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="sessionForm" (ngSubmit)="onSessionSubmit(modal)">
+        <div class="mb-3">
+          <label for="session_name" class="form-label">Name</label>
+          <input formControlName="name" type="text" class="form-control" id="session_name" placeholder="Enter Name">
+        </div>
+
+        <div class="mb-3">
+          <label for="sop_id" class="form-label">SOP</label>
+          <select formControlName="sop_id" class="form-select" id="sop_id">
+            <option *ngFor="let sop of sops" [value]="sop.id">{{ sop.name }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="status" class="form-label">Status</label>
+          <select formControlName="status" class="form-select" id="status">
+            <option value="active">active</option>
+            <option value="archived">archived</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="audio_files" class="form-label">Audio Files</label>
+          <select formControlName="audio_file_ids" class="form-select" id="audio_files" multiple>
+            <option *ngFor="let file of audioFiles" [value]="file.id">{{ file.file_path }}</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+          <button type="submit" class="btn btn-primary">{{ isSessionEditing ? 'Update Session' : 'Save Session'}}</button>
+        </div>
+      </form>
     </div>
   </ng-template>
 
