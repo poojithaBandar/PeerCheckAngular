@@ -24,6 +24,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonitorComponent } from './monitor/monitor.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { LoaderComponent } from './loader/loader.component';
+import { LoaderInterceptor } from './interceptors/loader.interceptor';
 
 // theme-toggle\theme-toggle.component
 
@@ -40,7 +43,8 @@ import { MonitorComponent } from './monitor/monitor.component';
     HeaderComponent,
     ThemeToggleComponent,
     DashboardComponent,
-    MonitorComponent
+    MonitorComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -56,6 +60,11 @@ import { MonitorComponent } from './monitor/monitor.component';
   providers: [
     provideClientHydration(),
     DatePipe, // Add DatePipe to providers
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
 })
