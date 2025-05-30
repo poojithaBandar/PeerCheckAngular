@@ -154,6 +154,31 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}`+'sop/list/' + token +'/');
   }
 
+  createSession(object: any){
+    const token = localStorage.getItem('token');
+    return this.http.post(`${this.baseUrl}session/create/`+token+'/', object);
+  }
+
+  getSessions(){
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}session/list/`+token+'/');
+  }
+
+  getSessionById(sessionId: number){
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}session/`+sessionId+'/'+token+'/');
+  }
+
+  updateSession(sessionId: number, object: any){
+    const token = localStorage.getItem('token');
+    return this.http.put(`${this.baseUrl}session/`+sessionId+'/'+token+'/', object);
+  }
+
+  deleteSession(sessionId: number){
+    const token = localStorage.getItem('token');
+    return this.http.delete(`${this.baseUrl}session/`+sessionId+'/'+token+'/');
+  }
+
   reanalyzePeerSessionRecording(recordId: number, newKeywords: string) {
     return this.http.post(
       `${this.baseUrl}/peer-sessions/recordings/${recordId}/reanalyze`,

@@ -49,6 +49,7 @@ export class DashboardComponent {
   isDarkTheme = false;
   createUserForm: FormGroup;
   sopForm: FormGroup;
+  sessionForm: FormGroup;
   kpis = [
     { count: 0, label: 'Total Users', bg: 'bg-primary', hovered: true ,icon:"fas fa-users" },
     { count: 0, label: 'Active Sessions', bg: 'bg-success', hovered: true ,icon:"fas fa-bolt" },
@@ -61,11 +62,18 @@ export class DashboardComponent {
   users: User[] = [];
   showUserTable = false;
   showSOPTable: boolean = false;
+  showSessionTable: boolean = false;
   submitted: boolean = false;
+  sessionSubmitted: boolean = false;
   isEditing: boolean = false;
   editingUserId!: number | null ;
   editingSOPId!: number | null;
-  isSOPEditing: boolean = false; 
+  isSOPEditing: boolean = false;
+  isSessionEditing: boolean = false;
+  editingSessionId!: number | null;
+
+  sessions: any[] = [];
+  audioFiles: any[] = [];
 
   constructor(private modalService: NgbModal, private themeService: ThemeService,private apiService: ApiService,private fb: FormBuilder,private toasterService:ToastrService,public authService : AuthService) {
     this.createUserForm = this.fb.group({
@@ -78,6 +86,12 @@ export class DashboardComponent {
       name: ['', Validators.required],
       version: ['', Validators.required],
       steps: this.fb.array([])
+    });
+    this.sessionForm = this.fb.group({
+      name: ['', Validators.required],
+      sop_id: [null, Validators.required],
+      status: ['active', Validators.required],
+      audio_file_ids: [[], Validators.required]
     });
     this.themeService.currentTheme$.subscribe(t => {
       this.isDarkTheme = t === 'dark';
@@ -326,5 +340,116 @@ export class DashboardComponent {
 
   toggleDetails(sopId: number): void {
     this.showDetails[sopId] = !this.showDetails[sopId];
+  }
+
+  toggleSessionTable() {
+    this.showSessionTable = !this.showSessionTable;
+  }
+
+  fetchSessions() {
+    this.apiService.getSessions().subscribe({
+      next: (data: any) => {
+        this.sessions = data.results;
+      },
+      error: (err) => {
+        console.error(err);
+        this.toasterService.error('Failed to load data.', 'Error');
+      }
+    });
+  }
+
+  fetchAudioFiles() {
+    this.apiService.fetchAudioRecords().subscribe({
+      next: (data: any) => {
+        this.audioFiles = data.results;
+      },
+      error: (err) => {
+        console.error(err);
+        this.toasterService.error('Failed to load data.', 'Error');
+      }
+    });
+  }
+
+  openCreateSession(content: any) {
+    this.sessionForm.reset({ status: 'active', audio_file_ids: [] });
+    this.isSessionEditing = false;
+    this.editingSessionId = null;
+    this.fetchSOP();
+    this.fetchAudioFiles();
+    this.modalService.open(content, { centered: true });
+  }
+
+  editSession(sessionId: number, content: any) {
+    this.apiService.getSessionById(sessionId).subscribe((data: any) => {
+      this.sessionForm.patchValue({
+        name: data.name,
+        sop_id: data.sop_id,
+        status: data.status,
+        audio_file_ids: data.audio_file_ids
+      });
+      this.isSessionEditing = true;
+      this.editingSessionId = sessionId;
+      this.fetchSOP();
+      this.fetchAudioFiles();
+      this.modalService.open(content, { centered: true });
+    });
+  }
+
+  onSessionSubmit(modal: any) {
+    this.sessionSubmitted = true;
+    if (this.sessionForm.valid) {
+      if (this.isSessionEditing && this.editingSessionId !== null) {
+        this.apiService.updateSession(this.editingSessionId, this.sessionForm.value).subscribe({
+          next: () => {
+            this.fetchSessions();
+            this.isSessionEditing = false;
+            this.editingSessionId = null;
+            modal.dismiss();
+            this.toasterService.success('Session updated successfully!', 'Success');
+            this.sessionForm.reset();
+          },
+          error: (err) => {
+            console.error(err);
+            this.toasterService.error('Failed to update.', 'Error');
+          }
+        });
+      } else {
+        this.apiService.createSession(this.sessionForm.value).subscribe({
+          next: () => {
+            if (this.showSessionTable) {
+              this.fetchSessions();
+            }
+            modal.dismiss();
+            this.sessionSubmitted = false;
+            this.sessionForm.reset();
+            this.toasterService.success('Session created successfully!', 'Success');
+          },
+          error: (err) => {
+            console.error(err);
+            this.toasterService.error('Failed to create.', 'Error');
+          }
+        });
+      }
+    }
+  }
+
+  openSessionDeleteModal(content: any, sessionId: number) {
+    this.modalService.open(content).result.then(
+      (result) => {
+        if (result === 'Confirm') {
+          this.apiService.deleteSession(sessionId).subscribe({
+            next: () => {
+              this.fetchSessions();
+              this.toasterService.success('Session deleted successfully!', 'Success');
+            },
+            error: (err) => {
+              console.error(err);
+              this.toasterService.error('Failed to delete item.', 'Error');
+            }
+          });
+        }
+      },
+      () => {}
+    );
   }
 }
