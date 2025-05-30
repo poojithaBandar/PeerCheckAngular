@@ -204,7 +204,7 @@
         <tbody>
           <tr *ngFor="let session of sessions">
             <td>{{ session.name }}</td>
-            <td>{{ session.sop_name }}</td>
+            <td>{{ session.sop_details.name }}</td>
             <td>{{ session.status }}</td>
             <td>{{ session.created_at | date:'medium' }}</td>
             <td>

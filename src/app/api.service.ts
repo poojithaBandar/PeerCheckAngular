@@ -156,27 +156,27 @@ export class ApiService {
 
   createSession(object: any){
     const token = localStorage.getItem('token');
-    return this.http.post(`${this.baseUrl}session/create/`+token+'/', object);
+    return this.http.post(`${this.baseUrl}sessions/create/`+token+'/', object);
   }
 
   getSessions(){
     const token = localStorage.getItem('token');
-    return this.http.get(`${this.baseUrl}session/list/`+token+'/');
+    return this.http.get(`${this.baseUrl}sessions/list/`+token+'/');
   }
 
   getSessionById(sessionId: number){
     const token = localStorage.getItem('token');
-    return this.http.get(`${this.baseUrl}session/`+sessionId+'/'+token+'/');
+    return this.http.get(`${this.baseUrl}session/details/`+sessionId+'/'+token+'/');
   }
 
   updateSession(sessionId: number, object: any){
     const token = localStorage.getItem('token');
-    return this.http.put(`${this.baseUrl}session/`+sessionId+'/'+token+'/', object);
+    return this.http.put(`${this.baseUrl}session/details/`+sessionId+'/'+token+'/', object);
   }
 
   deleteSession(sessionId: number){
     const token = localStorage.getItem('token');
-    return this.http.delete(`${this.baseUrl}session/`+sessionId+'/'+token+'/');
+    return this.http.delete(`${this.baseUrl}session/details/`+sessionId+'/'+token+'/');
   }
 
   reanalyzePeerSessionRecording(recordId: number, newKeywords: string) {

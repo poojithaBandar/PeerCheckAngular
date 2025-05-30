@@ -383,7 +383,7 @@ export class DashboardComponent {
     this.apiService.getSessionById(sessionId).subscribe((data: any) => {
       this.sessionForm.patchValue({
         name: data.name,
-        sop_id: data.sop_id,
+        sop_id: data.sop_details.id,
         status: data.status,
         audio_file_ids: data.audio_file_ids
       });
