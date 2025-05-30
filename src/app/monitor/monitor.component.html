@@ -1,0 +1,41 @@
+<div class="container py-4">
+    <h4>Monitor Logs</h4>
+    <div class="row">
+      <div class="col-md-4" *ngFor="let log of logs">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title text-primary"><i class="fas fa-microphone-alt"></i> {{ log.action }}</h5>
+            <p class="card-subtitle mb-2 text-muted">
+              <i class="fas fa-user"></i> {{ log.user.name }} ({{ log.user.role }})
+            </p>
+            <p class="card-text">
+              <strong>Username:</strong> {{ log.user.username }}<br>
+              <strong>Email:</strong> {{ log.user.email }}<br>
+              <strong>Timestamp:</strong> {{ log.timestamp | date:'medium' }}<br>
+              <strong>Session:</strong> {{ log.session }}<br>
+              <strong>Object Type:</strong> {{ log.object_type }}<br>
+            </p>
+            <button class="btn btn-outline-info btn-sm" (click)="openDetailsModal(log,detailsModal)">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #detailsModal let-modal>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"  (click)="modal.dismiss()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedLog">
+            <div *ngFor="let detail of details | keyvalue">
+              <strong>{{detail.key}}:</strong> {{detail.value}}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary"  (click)="modal.dismiss()" data-bs-dismiss="modal">Close</button>
+        </div>
+  </ng-template>

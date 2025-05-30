@@ -1,41 +1,73 @@
-<div class="container">
-  <!-- Recording Section -->
-  <div class="card recording-section">
-    <div class="card-header">
-      <h3 class="section-title">Audio Recording</h3>
-      <div class="keywords-input">
-        <label for="keywords">Keywords to Track:</label>
-        <div class="input-container card">
-          <i class="fas fa-tags input-icon"></i>
-          <input 
-            id="keywords" 
-            [(ngModel)]="keywords" 
-            placeholder="Enter keywords (comma-separated)" 
-            class="form-control custom-input"
-          />
+<!-- recording.component.html -->
+<!-- Header -->
+<!-- Main Content -->
+<div class="main-content">
+  <h2>Recording Session</h2>
+
+  <!-- Recording Controls -->
+  <div class="recording-controls-card">
+    <div>
+      <label class="fw-normal mb-1">
+        <span class="label-icon">🏷️</span>
+        Pick SOP
+      </label>
+      <select style="width: 50%;" class="form-select" [(ngModel)]="selectedSOPID">
+        <option disabled value="">select SOP</option>
+        <option *ngFor="let sop of sops" [value]="sop.id">
+          {{ sop.name }} (Version: {{ sop.version }})
+        </option>
+      </select>
+    </div>
+    <!-- <div class="keywords-section">
+        <label class="keywords-label">
+          <span class="label-icon">🏷️</span>
+          Keywords to Track (comma-separated):
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="keywords"
+          placeholder="Enter keywords like: javascript, react, api..."
+          class="keywords-input"
+        />
+      </div> -->
+
+    <!-- Recording and File Upload Controls Grid -->
+    <div class="controls-grid">
+      <!-- Recording Section -->
+      <div class="recording-section">
+        <h3 class="section-title">
+          <span class="section-icon">🎙️</span>
+          Live Recording
+        </h3>
+        <div class="button-group">
+          <button (click)="startRecording()" [disabled]="isRecording || isProcessing" class="btn btn-start-recording mb-0"
+            [class.disabled]="isRecording">
+            {{ isRecording ? '🔴 Recording...' : '▶️ Start Recording' }}
+          </button>
+
+          <button (click)="stopRecording()" [disabled]="!isRecording || isProcessing" class="btn btn-stop-recording"
+            [class.disabled]="!isRecording">
+            ⏹️ Stop Recording
+          </button>
+        </div>
+      </div>
+
+      <!-- File Upload Section -->
+      <div class="file-upload-section">
+        <h3 class="section-title">
+          <span class="section-icon">📁</span>
+          File Upload
+        </h3>
+        <div class="button-group">
+          <input type="file" accept=".wav" id="file-select" class="btn btn-select-file"
+            (change)="onFileSelected($event)" />
         </div>
       </div>
     </div>
 
-    <div class="recording-controls">
-      <button 
-        (click)="startRecording()" 
-        [disabled]="isRecording || isProcessing" 
-        class="btn-record"
-        [class.active]="isRecording"
-      >
-        <i class="fas fa-microphone"></i>
-        <span>Start Recording</span>
-      </button>
-      <button 
-        (click)="stopRecording()" 
-        [disabled]="!isRecording || isProcessing" 
-        class="btn-stop"
-      >
-        <i class="fas" [class.fa-stop]="!isProcessing" [class.fa-spinner]="isProcessing" [class.fa-spin]="isProcessing"></i>
-        <span>{{ isProcessing ? 'Processing...' : 'Stop Recording' }}</span>
-      </button>
-    </div>
+    <button (click)="processAudio(true)" class="btn btn-upload-file">
+      ⬆️ Upload File
+    </button>
 
     <!-- Current Recording Preview -->
     <div *ngIf="recordedAudioURL" class="current-recording">
@@ -45,69 +77,13 @@
       </audio>
     </div>
   </div>
-
-  <!-- Results Section -->
-  <div class="results-section" *ngIf="detectedPrompts.length > 0 || audioFileData">
-    <div class="card">
-      <h3>Analysis Results</h3>
-      
-      <!-- Prompts -->
-      <div *ngIf="detectedPrompts.length > 0" class="prompts-container">
-        <h4>Detected Keywords</h4>
-        <div class="prompt-list">
-          <div *ngFor="let prompt of detectedPrompts" class="prompt-item">
-            <span class="keyword">{{ prompt.word }}</span>
-            <span class="timestamp">{{ prompt.timestamp }}s</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- File Details -->
-      <div *ngIf="audioFileData" class="file-details">
-        <h4>Processing Details</h4>
-        <div class="details-grid">
-          <div class="detail-item">
-            <label>Status:</label>
-            <span [class.status-success]="audioFileData.status === 'processed'">
-              {{ audioFileData.status }}
-            </span>
-          </div>
-          <div class="detail-item">
-            <label>Duration:</label>
-            <span>{{ audioFileData.duration }} seconds</span>
-          </div>
-          <div class="detail-item full-width">
-            <label>Transcription:</label>
-            <p>{{ audioFileData.transcription }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="upload-section mb-4">
-    <div class="card shadow-sm text-center p-4">
-      <input type="file" #uploadInput accept=".wav" (change)="onFileSelected($event)">
-      <button type="button" class="btn btn-outline-primary" (click)="processAudio(true)">
-        <i class="fas fa-upload me-2"></i>Upload Audio
-      </button>
-    </div>
-  </div>
-  <div *ngIf="isProcessing" class="loader">Uploading...</div>
-
-  <!-- Records Section -->
   <div class="records-section">
     <div class="card">
-      <div class="section-header">
+      <div class="section-header p-0">
         <h3>Previous Recordings</h3>
         <div class="input-container card">
-          <i class="fas fa-search input-icon"></i>
-          <input 
-            type="text" 
-            [(ngModel)]="searchTerm" 
-            placeholder="Search recordings..." 
-            class="custom-input"
-          />
+          <i class="fas fa-search input-icon pt-3"></i>
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Search recordings..." class="custom-input" />
         </div>
       </div>
 
@@ -122,35 +98,33 @@
         <div *ngFor="let record of filteredAudioRecords; let i = index" class="record-card">
           <div class="record-header">
             <span class="record-id">#{{ record.id }}</span>
-            <span class="record-status" [class.completed]="record.status === 'processed'" [class.reanalyzed]="record.status === 'reanalyzed'">
+            <span class="record-status" [class.completed]="record.status === 'processed'"
+              [class.reanalyzed]="record.status === 'reanalyzed'">
               {{ record.status }}
             </span>
           </div>
 
           <div class="record-body">
+            @if( record.sop?.name){
+            <strong class="speaker-name">SOP :</strong>
+                    <span>{{ record.sop.name }}</span>
+            }
             <audio controls class="audio-player">
               <source [src]="record.file_path" type="audio/wav" />
             </audio>
 
             <div class="record-content">
+
               <div class="transcription">
                 <h5>Transcription</h5>
-                <ng-container
-                *ngIf="record.parsedTranscription?.length; else noTrans"
-              >
-                <div
-                  *ngFor="let line of record.parsedTranscription; let idx = index"
-                  [hidden]="!record.showFull && idx >= 3"
-                  class="transcription-line"
-                >
-                  <strong class="speaker-name">{{ line.speaker }}:</strong>
-                  <span>{{ line.text }}</span>
-                </div>
-                <button
-                  *ngIf="record.parsedTranscription.length > 3"
-                  class="btn-link"
-                    (click)="toggleViewMore(i, !record.showFull)"
-                  >
+                <ng-container *ngIf="record.parsedTranscription?.length; else noTrans">
+                  <div *ngFor="let line of record.parsedTranscription; let idx = index"
+                    [hidden]="!record.showFull && idx >= 3" class="transcription-line">
+                    <strong class="speaker-name">{{ line.speaker }}:</strong>
+                    <span>{{ line.text }}</span>
+                  </div>
+                  <button *ngIf="record.parsedTranscription.length > 3" class="btn-show-more"
+                    (click)="toggleViewMore(i, !record.showFull)">
                     {{ record.showFull ? 'Show Less' : 'Show More' }}
                   </button>
                 </ng-container>
@@ -158,29 +132,24 @@
                   <p>No transcription available.</p>
                 </ng-template>
               </div>
-
+              @if(record.keywords_detected?.length > 0){
               <div class="keywords-section">
                 <h5>Keywords Found</h5>
                 <div class="keywords-list">
-                  <span *ngFor="let keyword of record.keywords_detected?.split(',')" class="keyword-tag">
-                    {{ keyword.trim() }}
+                  <span *ngFor="let keyword of record.keywords_detected" class="keyword-tag">
+                    <strong class="speaker-name">Word:</strong> {{ keyword.word.trim() }}
+                    <strong class="speaker-name">Timestamp:</strong> {{ keyword.timestamp }}
+
                   </span>
                 </div>
               </div>
+              }
             </div>
 
             <div class="record-actions">
-              <input 
-                type="text" 
-                [(ngModel)]="record.newKeywords" 
-                placeholder="New keywords for analysis" 
-                class="reanalyze-input"
-              />
-              <button 
-                (click)="reanalyzeAudio(record)" 
-                class="btn-reanalyze"
-                [disabled]="!record.newKeywords"
-              >
+              <input type="text" [(ngModel)]="record.newKeywords" placeholder="New keywords for analysis"
+                class="reanalyze-input" />
+              <button (click)="reanalyzeAudio(record)" class="btn-reanalyze" [disabled]="!record.newKeywords">
                 <i class="fas fa-sync-alt"></i>
                 Reanalyze
               </button>
@@ -196,4 +165,3 @@
       </div>
     </div>
   </div>
-</div>

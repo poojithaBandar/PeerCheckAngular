@@ -33,10 +33,40 @@ export class AudioProcessComponent implements OnInit {
   mediaRecorder: MediaRecorder | null = null;
   recordedChunks: Blob[] = [];
   transcription: any[] = [];
+  newTag: string = '';
+  tags: string[] = [];
+  sops: any[] = [];
+  selectedSOPID!: number;
   constructor(private ngZone: NgZone,private apiService: ApiService, private router: Router, private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.fetchAudioRecords();
+    this.fetchSOP();    
+  }
+
+  onSOPChange(sopID: number): void {
+    this.selectedSOPID = sopID;
+  }
+  fetchSOP(){
+    this.apiService.getSOPs().subscribe({
+      next: (data: any) => {
+        this.sops = data.results;
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    })
+  }
+
+  addTag(): void {
+    if (this.newTag.trim()) {
+      this.tags.push(this.newTag.trim());
+      this.newTag = '';
+    }
+  }
+
+  removeTag(tag: string): void {
+    this.tags = this.tags.filter(t => t !== tag);
   }
 
   // Fetch audio records
@@ -63,7 +93,6 @@ export class AudioProcessComponent implements OnInit {
       },
     });
   }
-
   // Filter audio records
   get filteredAudioRecords(): any[] {
     if (!this.searchTerm.trim()) return this.audioRecords;
@@ -106,6 +135,9 @@ export class AudioProcessComponent implements OnInit {
       formData.append('start_prompt', this.startPrompt);
       formData.append('end_prompt', this.endPrompt);
       formData.append('keywords', this.keywords);
+      // formData.append('SOPId', this.selectedSOPID);
+      formData.append('sop_id', this.selectedSOPID.toString());
+
       this.apiService.processAudio(formData).subscribe({
         next: (response) => {
           this.audioFileData = response.audio_file;
@@ -305,56 +337,7 @@ export class AudioProcessComponent implements OnInit {
 
   // Upload the recorded file with prompts
   uploadRecordedFile(file: File): void {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('start_prompt', this.startPrompt);
-    formData.append('end_prompt', this.endPrompt);
-    formData.append('keywords', this.keywords);
-
-    this.apiService.processAudio(formData).subscribe(
-      (response) => {
-        this.audioFileData = response.audio_file;
-        this.segments = response.detected_prompts;
-        this.isProcessing = false;
-        this.isRecording = false;
-        this.fetchAudioRecords();
-        Swal.fire(
-          'Success!',
-          'Audio file processed successfully!',
-          'success'
-        ).then(() => {
-         this.resetStateAfterProcessing();
-        });
-      },
-      (error) => {
-        this.isProcessing = false;
-        this.isRecording = false;
-        if (
-          error.error.error === 'Start or End Prompt not found in the audio.'
-        ) {
-          console.log(
-            'Could not find the specified prompts in the audio. Please verify your prompts and try again.'
-          );
-          this.errorMessage =
-            'Could not find the specified prompts in the audio. Please verify your prompts and try again.';
-          Swal.fire('Error!', this.errorMessage, 'error').then(() => {
-            // Clear the prompts after processing
-            this.startPrompt = '';
-            this.endPrompt = '';
-            // window.location.reload(); // Reload the page after success
-          });
-        } else {
-          console.log('Failed to process audio. Please try again.');
-          this.errorMessage = 'Failed to process audio. Please try again.';
-          Swal.fire('Error!', this.errorMessage, 'error').then(() => {
-            // Clear the prompts after processing
-            this.startPrompt = '';
-            this.endPrompt = '';
-            // window.location.reload(); // Reload the page after success
-          });
-        }
-      }
-    );
+    this.selectedFile = file;
   }
 
   // Toggle View More/View Less

@@ -1,14 +1,14 @@
 <div _ngcontent-ng-c3641895104="" class="container px-sm-0">
   <div _ngcontent-ng-c3641895104="" class="row justify-content-center">
     <div _ngcontent-ng-c3641895104=""
-      class="col-xl-8 col-lg-6 pb-5 text-center my-auto animation-zidex pos-relative landing-main-heading">
-      <h1 _ngcontent-ng-c3641895104="" class="text- tx-fixed-white mt-0">A quick and easy way to build your Business
+      class="col-xl-8 col-lg-6 pb-2 text-center my-auto animation-zidex pos-relative landing-main-heading">
+      <h1 _ngcontent-ng-c3641895104="" class="text-tx-fixed-white mt-0">A quick and easy way to build your Business
         with <span _ngcontent-ng-c3641895104="" class="tx-fixed-white fw-bold">"PeerCheck"</span></h1>
     </div>
   </div>
 </div>
-<div class="container py-4" [ngClass]="{'bg-dark text-light': isDarkTheme}">
-
+<div class="container py-4">
+  @if(this.authService.getUserRole() == 'admin'){
   <!-- KPI Cards with Animation -->
   <div class="row g-3 mb-4" [@kpiAnimation]>
     <div class="col-6 col-md-3" *ngFor="let kpi of kpis; trackBy: trackByKpi">
@@ -33,9 +33,11 @@
       </div>
     </div>
   </div>
+}
 
   <!-- User Management Controls -->
   <div class="d-flex gap-2 mb-3" style="justify-content: center;">
+    @if(this.authService.getUserRole() == 'admin'){
     <button class="btn btn-primary btn-animated position-relative overflow-hidden" (click)="openCreateUser(createUserModal)">
       <span class="btn-text">
         <i class="fas fa-plus me-2"></i>
@@ -43,6 +45,7 @@
       </span>
       <div class="btn-ripple"></div>
     </button>
+  }
     <button class="btn btn-primary btn-animated position-relative overflow-hidden" (click)="openCreateUser(createSOPModal);addStep()">
       <span class="btn-text">
         <i class="fas fa-plus me-2"></i>
@@ -50,17 +53,18 @@
       </span>
       <div class="btn-ripple"></div>
     </button>
-
+    @if(this.authService.getUserRole() == 'admin'){
     <button class="btn btn-outline-secondary btn-animated position-relative overflow-hidden"
  (click)="fetchUsers();toggleUserTable();">
-      <span class="btn-text">
-        <i class="fas fa-list me-2"></i>
+      <span class="btn-text text-color-theme">
+        <i  class="fas fa-list me-2"></i>
         {{ showUserTable ? 'Hide Users' : 'List Users' }}
       </span>
       <div class="btn-ripple"></div>
     </button>
+  }
     <button class="btn btn-outline-secondary btn-animated position-relative overflow-hidden" (click)="fetchSOP();toggleSOPTable();">
-    <span class="btn-text">
+    <span class="btn-text text-color-theme">
       <i class="fas fa-list me-2"></i>
       {{ showSOPTable ? 'Hide SOPs' : 'List SOPs' }}
     </span>
@@ -72,7 +76,7 @@
   @if(showUserTable){
   <div class="table-container" >
     <div class="table-responsive">
-      <table class="table table-striped table-hover animated-table">
+      <table style="overflow: hidden;" class="table table-striped table-hover animated-table m-0">
         <thead class="table-light">
           <tr>
             <th>
@@ -125,6 +129,7 @@
 }
 @if(showSOPTable){
   <div class="container py-4">
+    <h4>SOP's List</h4>
     <div class="row">
       <div class="col-md-4" *ngFor="let sop of sops">
         <div class="card shadow-sm mb-4">

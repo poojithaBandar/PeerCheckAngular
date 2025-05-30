@@ -82,6 +82,11 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}sop/`+sopID+'/'+token+'/');
   }
 
+  getLogs(){
+    const token = localStorage.getItem('token');
+    return this.http.get(`${this.baseUrl}audit-logs`+'/'+token+'/');
+  }
+
   logout(): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.post(`${this.baseUrl}logout/` + token+'/', {});

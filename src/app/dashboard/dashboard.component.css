@@ -3,6 +3,10 @@
 }
 
 
+.text-color-theme{
+  color: var(--text-color);
+}
+
 .card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -166,6 +170,7 @@
 .table-container {
   border-radius: 8px;
   overflow: hidden;
+  width: fit-content;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -380,4 +385,5 @@
     background: #555;
   }
 }
+
 }

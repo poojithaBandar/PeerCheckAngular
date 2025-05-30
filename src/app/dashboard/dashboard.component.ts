@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../api.service';
+import { AuthService } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
 
 interface User {
@@ -65,7 +66,7 @@ export class DashboardComponent {
   editingSOPId!: number | null;
   isSOPEditing: boolean = false; 
 
-  constructor(private modalService: NgbModal, private themeService: ThemeService,private apiService: ApiService,private fb: FormBuilder,private toasterService:ToastrService) {
+  constructor(private modalService: NgbModal, private themeService: ThemeService,private apiService: ApiService,private fb: FormBuilder,private toasterService:ToastrService,public authService : AuthService) {
     this.createUserForm = this.fb.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],

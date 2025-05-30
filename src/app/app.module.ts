@@ -23,6 +23,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MonitorComponent } from './monitor/monitor.component';
 
 // theme-toggle\theme-toggle.component
 
@@ -38,7 +39,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PeerSessionComponent, // Add PeerSessionComponent
     HeaderComponent,
     ThemeToggleComponent,
-    DashboardComponent
+    DashboardComponent,
+    MonitorComponent
   ],
   imports: [
     BrowserModule,

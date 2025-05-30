@@ -10,10 +10,11 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PeerSessionComponent } from './peer-session/peer-session.component';
+import { MonitorComponent } from './monitor/monitor.component';
 // import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: AudioProcessComponent },
+  { path: '*', component: AudioProcessComponent },
   { path: 'process-audio', component: AudioProcessComponent },
   { path: 'submit-feedback', component: FeedbackComponent },
   { path: 'add-record', component: AddRecordComponent }, // Add this route
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'analytics', component: AnalyticsComponent },
   { path: 'settings', component: SettingsComponent },
+  { path: 'monitor', component: MonitorComponent },
   {
     path: 'peer-session',
     component: PeerSessionComponent,

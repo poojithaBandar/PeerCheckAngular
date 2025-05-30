@@ -6,10 +6,9 @@
         <a class="nav-brand" [routerLink]="['/dashboard']" routerLinkActive="active">PeerCheck</a>
         <!-- Desktop Navigation Links -->
         <div class="nav-links" *ngIf="showNavigation">
-            @if(this.authService.getUserRole() == 'admin'){
             <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
-            }
             <a [routerLink]="['/peer-session/start']" routerLinkActive="active">Peer Session</a>
+            <a [routerLink]="['/monitor']" routerLinkActive="active">Monitor</a>
         </div>
     </div>
 
