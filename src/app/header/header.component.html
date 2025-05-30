@@ -9,7 +9,9 @@
           </a>        <!-- Desktop Navigation Links -->
         <div class="nav-links" *ngIf="showNavigation">
             <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
+            @if(this.authService.getUserRole() != 'reviewer'){
             <a [routerLink]="['/peer-session/start']" routerLinkActive="active">Peer Session</a>
+            }
             @if(this.authService.getUserRole() != 'operator'){
             <a [routerLink]="['/monitor']" routerLinkActive="active">Monitor</a>
             }
@@ -20,7 +22,7 @@
         <app-theme-toggle></app-theme-toggle>
         <div class="user-menu" *ngIf="showNavigation">
             <div class="user-info">
-                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-user-circle m-1"></i>
                 <span class="username">{{ username }}</span>
             </div>
             <div class="dropdown-menu">
