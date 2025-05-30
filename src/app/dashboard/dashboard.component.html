@@ -74,6 +74,7 @@
 
   <!-- Animated User Table -->
   @if(showUserTable){
+    <h4>User's List</h4>
   <div class="table-container" >
     <div class="table-responsive">
       <table style="overflow: hidden;" class="table table-striped table-hover animated-table m-0">
@@ -106,8 +107,7 @@
             <td>
               <span class="badge animated-badge" [class.bg-success]="user.is_active"
                 [class.bg-secondary]="!user.is_active">
-                <i class="fas fa-circle me-1" [class.text-success]="user.is_active"
-                  [class.text-secondary]="!user.is_active"></i>
+                
                 {{user.is_active ? 'Active' : 'InActive'}}
               </span>
             </td>
