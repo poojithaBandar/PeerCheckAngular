@@ -37,7 +37,7 @@ export class AddRecordComponent {
       next: () => {
         this.successMessage = 'File uploaded successfully!';
         this.errorMessage = null;
-        this.toastr.success('Item created successfully!', 'Success');
+        this.toastr.success('File created successfully!', 'Success');
         setTimeout(() => this.router.navigate(['/process-audio']), 2000); // Redirect after 2 seconds
       },
       error: (err) => {

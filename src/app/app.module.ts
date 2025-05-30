@@ -55,7 +55,8 @@ import { LoaderInterceptor } from './interceptors/loader.interceptor';
     NgbModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
-      positionClass: 'toast-top-right'
+      positionClass: 'toast-top-right',
+      closeButton : true
     }),
     CommonModule, // Add CommonModule
   ],

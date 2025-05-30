@@ -14,7 +14,6 @@ import { MonitorComponent } from './monitor/monitor.component';
 // import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '*', component: AudioProcessComponent },
   { path: 'process-audio', component: AudioProcessComponent },
   { path: 'submit-feedback', component: FeedbackComponent },
   { path: 'add-record', component: AddRecordComponent }, // Add this route
@@ -35,7 +34,7 @@ const routes: Routes = [
     component: PeerSessionComponent,
     data: { autoStart: true },
   },
-  { path: '', redirectTo: '/register', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   // { path: '/login', redirectTo: '/login', pathMatch: 'full' },
 ];
 
