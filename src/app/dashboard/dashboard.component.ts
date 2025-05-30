@@ -259,6 +259,7 @@ export class DashboardComponent {
         next: (data: any) => {
           if(this.showUserTable){
             this.fetchUsers();
+            this.fetchDashboardSummary();
           }
           modal.dismiss();
           this.toasterService.success('User created successfully!', 'Success');
@@ -323,6 +324,7 @@ export class DashboardComponent {
           modal.dismiss();
           if(this.showSOPTable){
             this.fetchSOP();
+            this.fetchDashboardSummary();
           }
           this.submitted = false;
           this.sopForm.reset();
@@ -418,6 +420,7 @@ export class DashboardComponent {
           next: () => {
             if (this.showSessionTable) {
               this.fetchSessions();
+              this.fetchDashboardSummary();
             }
             modal.dismiss();
             this.sessionSubmitted = false;
