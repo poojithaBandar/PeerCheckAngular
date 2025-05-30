@@ -17,8 +17,8 @@
           {{ sop.name }} (Version: {{ sop.version }})
         </option>
       </select>
-      <div ngbDropdown class="d-inline-block">
-        <button class="btn btn-secondary" ngbDropdownToggle>
+      <div ngbDropdown class="col-lg-6">
+        <button class="btn btn-secondary m-0 mt-4" ngbDropdownToggle>
           Select Users
         </button>
         <div ngbDropdownMenu class="p-3" style="max-height: 200px; overflow-y: auto;">
@@ -125,7 +125,7 @@
               <source [src]="record.file_path" type="audio/wav" />
             </audio>
 
-            <div class="record-content">
+            <div class="record-content m-0">
 
               <div class="transcription">
                 <h5>Transcription</h5>
@@ -147,18 +147,15 @@
               @if(record.keywords_detected?.length > 0){
               <div class="keywords-section">
                 <h5>Keywords Found</h5>
-                <div class="keywords-list">
                   <span *ngFor="let keyword of record.keywords_detected" class="keyword-tag">
-                    <strong class="speaker-name">Word:</strong> {{ keyword.word.trim() }}
-                    <strong class="speaker-name">Timestamp:</strong> {{ keyword.timestamp }}
-
+                   <p class="m-0"><strong class="speaker-name">Word:</strong> {{ keyword.word.trim() }}</p>
+                  <p class="m-0"><strong class="speaker-name">Word Index:</strong> {{ keyword.timestamp }}</p>
                   </span>
-                </div>
               </div>
               }
             </div>
 
-            <div class="record-actions">
+            <div class="record-actions d-flex align-items-center m-0 p-0">
               <input type="text" [(ngModel)]="record.newKeywords" placeholder="New keywords for analysis"
                 class="reanalyze-input" />
               <button (click)="reanalyzeAudio(record)" class="btn-reanalyze" [disabled]="!record.newKeywords">
