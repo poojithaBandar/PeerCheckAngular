@@ -16,9 +16,7 @@ export class LoginComponent {
   showPassword = false;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private apiService: ApiService,
-    private router: Router,
+    private formBuilder: FormBuilder, private apiService: ApiService, private router: Router,
     private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
